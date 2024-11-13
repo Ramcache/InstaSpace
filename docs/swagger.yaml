@@ -1,0 +1,108 @@
+basePath: /
+host: localhost:8080
+info:
+  contact:
+    email: ramaro@internet.ru
+    name: Техническая поддержка
+  description: Документация для API InstaSpace, включающая функционал авторизации
+    и регистрации.
+  title: Insta Space API
+  version: "1.0"
+paths:
+  /generate-token:
+    get:
+      consumes:
+      - application/json
+      description: Генерирует новый JWT токен, используя переданный email в качестве
+        данных. Токен будет действителен в течение 24 часов.
+      parameters:
+      - description: Email для включения в JWT токен
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешно сгенерированный JWT токен
+          schema:
+            type: string
+      summary: Генерация JWT токена
+      tags:
+      - auth
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Этот эндпоинт позволяет пользователю авторизоваться, используя
+        email и пароль.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Токен успешно создан
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Некорректные данные
+          schema:
+            type: string
+        "401":
+          description: Неверные учетные данные
+          schema:
+            type: string
+      summary: Авторизация пользователя
+      tags:
+      - auth
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Регистрирует нового пользователя по email, имени пользователя и
+        паролю. Возвращает JWT токен после успешной регистрации.
+      parameters:
+      - description: Email пользователя
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: Имя пользователя
+        in: body
+        name: username
+        required: true
+        schema:
+          type: string
+      - description: Пароль пользователя
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: JWT токен после успешной регистрации
+          schema:
+            type: string
+        "400":
+          description: Ошибка регистрации
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Регистрация нового пользователя
+      tags:
+      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
