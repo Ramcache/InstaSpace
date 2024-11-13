@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    container_name: myapp_db
+    environment:
+      POSTGRES_USER: InstaSpace
+      POSTGRES_PASSWORD: 7332
+      POSTGRES_DB: InstaSpace
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: myapp
+    environment:
+      DATABASE_URL: "postgresql://InstaSpace:7332@localhost:5432/InstaSpace?sslmode=disable"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
