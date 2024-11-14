@@ -18,6 +18,56 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/confirm": {
+            "get": {
+                "description": "Подтверждает email пользователя на основе предоставленного токена.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Подтверждение email пользователя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Токен подтверждения",
+                        "name": "token",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Email успешно подтверждён!",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Token is missing",
+                        "schema": {
+                            "$ref": "#/definitions/internal_auth.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid or expired token",
+                        "schema": {
+                            "$ref": "#/definitions/internal_auth.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed to activate user",
+                        "schema": {
+                            "$ref": "#/definitions/internal_auth.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/generate-token": {
             "get": {
                 "description": "Генерирует новый JWT токен, используя переданный email в качестве данных. Токен будет действителен в течение 24 часов.",
@@ -63,9 +113,20 @@ const docTemplate = `{
                     "auth"
                 ],
                 "summary": "Авторизация пользователя",
+                "parameters": [
+                    {
+                        "description": "Данные для входа пользователя",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_auth.LoginRequest"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Токен успешно создан",
+                        "description": "token\" \"Токен успешно создан",
                         "schema": {
                             "type": "object",
                             "additionalProperties": {
@@ -76,13 +137,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Некорректные данные",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/internal_auth.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учетные данные",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/internal_auth.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/internal_auth.ErrorResponse"
                         }
                     }
                 }
@@ -90,7 +157,7 @@ const docTemplate = `{
         },
         "/register": {
             "post": {
-                "description": "Регистрирует нового пользователя по email, имени пользователя и паролю. Возвращает JWT токен после успешной регистрации.",
+                "description": "Этот эндпоинт позволяет зарегистрировать нового пользователя, используя email, имя пользователя и пароль.",
                 "consumes": [
                     "application/json"
                 ],
@@ -103,42 +170,79 @@ const docTemplate = `{
                 "summary": "Регистрация нового пользователя",
                 "parameters": [
                     {
-                        "description": "Email пользователя",
-                        "name": "email",
+                        "description": "Данные для регистрации пользователя",
+                        "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Имя пользователя",
-                        "name": "username",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Пароль пользователя",
-                        "name": "password",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/internal_auth.RegisterRequest"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "JWT токен после успешной регистрации",
+                        "description": "message\" \"Registration successful! Please check your email to confirm.",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректные данные",
+                        "schema": {
+                            "$ref": "#/definitions/internal_auth.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка регистрации",
+                        "schema": {
+                            "$ref": "#/definitions/internal_auth.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/resend-confirmation": {
+            "post": {
+                "description": "Этот эндпоинт позволяет повторно отправить письмо для подтверждения почты.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Повторная отправка письма с подтверждением",
+                "parameters": [
+                    {
+                        "description": "Email для повторной отправки подтверждения",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_auth.ResendConfirmationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Письмо с подтверждением отправлено повторно",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "400": {
-                        "description": "Ошибка регистрации",
+                        "description": "Некорректные данные",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Пользователь не найден",
                         "schema": {
                             "type": "string"
                         }
@@ -149,6 +253,100 @@ const docTemplate = `{
                             "type": "string"
                         }
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "InstaSpace_internal_auth.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "InstaSpace_internal_auth.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "password123"
+                }
+            }
+        },
+        "InstaSpace_internal_auth.RegisterRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "password123"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "john_doe"
+                }
+            }
+        },
+        "InstaSpace_internal_auth.ResendConfirmationRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_auth.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "internal_auth.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "password123"
+                }
+            }
+        },
+        "internal_auth.RegisterRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "password123"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "john_doe"
+                }
+            }
+        },
+        "internal_auth.ResendConfirmationRequest": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
                 }
             }
         }

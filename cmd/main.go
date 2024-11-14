@@ -1,7 +1,7 @@
 package main
 
 import (
-	_ "InstaSpace/docs" // Пакет сгенерированной документации
+	_ "InstaSpace/docs"
 	"github.com/joho/godotenv"
 	"log"
 	"net/http"
@@ -42,6 +42,8 @@ func main() {
 	router := mux.NewRouter()
 	router.HandleFunc("/register", authHandler.Register).Methods("POST")
 	router.HandleFunc("/login", authHandler.Login).Methods("POST")
+	router.HandleFunc("/confirm", authHandler.ConfirmEmail).Methods("GET")
+	router.HandleFunc("/resend-confirmation", authHandler.ResendConfirmation).Methods("POST")
 	router.PathPrefix("/swagger/").Handler(httpSwagger.WrapHandler)
 
 	// Группа защищённых маршрутов

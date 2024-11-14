@@ -1,4 +1,67 @@
 basePath: /
+definitions:
+  InstaSpace_internal_auth.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  InstaSpace_internal_auth.LoginRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: password123
+        type: string
+    type: object
+  InstaSpace_internal_auth.RegisterRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: password123
+        type: string
+      username:
+        example: john_doe
+        type: string
+    type: object
+  InstaSpace_internal_auth.ResendConfirmationRequest:
+    properties:
+      email:
+        type: string
+    type: object
+  internal_auth.ErrorResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  internal_auth.LoginRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: password123
+        type: string
+    type: object
+  internal_auth.RegisterRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: password123
+        type: string
+      username:
+        example: john_doe
+        type: string
+    type: object
+  internal_auth.ResendConfirmationRequest:
+    properties:
+      email:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -9,6 +72,39 @@ info:
   title: Insta Space API
   version: "1.0"
 paths:
+  /confirm:
+    get:
+      consumes:
+      - application/json
+      description: Подтверждает email пользователя на основе предоставленного токена.
+      parameters:
+      - description: Токен подтверждения
+        in: query
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Email успешно подтверждён!
+          schema:
+            type: string
+        "400":
+          description: Token is missing
+          schema:
+            $ref: '#/definitions/internal_auth.ErrorResponse'
+        "401":
+          description: Invalid or expired token
+          schema:
+            $ref: '#/definitions/internal_auth.ErrorResponse'
+        "500":
+          description: Failed to activate user
+          schema:
+            $ref: '#/definitions/internal_auth.ErrorResponse'
+      summary: Подтверждение email пользователя
+      tags:
+      - auth
   /generate-token:
     get:
       consumes:
@@ -37,11 +133,18 @@ paths:
       - application/json
       description: Этот эндпоинт позволяет пользователю авторизоваться, используя
         email и пароль.
+      parameters:
+      - description: Данные для входа пользователя
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal_auth.LoginRequest'
       produces:
       - application/json
       responses:
         "200":
-          description: Токен успешно создан
+          description: token" "Токен успешно создан
           schema:
             additionalProperties:
               type: string
@@ -49,11 +152,15 @@ paths:
         "400":
           description: Некорректные данные
           schema:
-            type: string
+            $ref: '#/definitions/internal_auth.ErrorResponse'
         "401":
           description: Неверные учетные данные
           schema:
-            type: string
+            $ref: '#/definitions/internal_auth.ErrorResponse'
+        "500":
+          description: Ошибка сервера
+          schema:
+            $ref: '#/definitions/internal_auth.ErrorResponse'
       summary: Авторизация пользователя
       tags:
       - auth
@@ -61,43 +168,69 @@ paths:
     post:
       consumes:
       - application/json
-      description: Регистрирует нового пользователя по email, имени пользователя и
-        паролю. Возвращает JWT токен после успешной регистрации.
+      description: Этот эндпоинт позволяет зарегистрировать нового пользователя, используя
+        email, имя пользователя и пароль.
       parameters:
-      - description: Email пользователя
+      - description: Данные для регистрации пользователя
         in: body
-        name: email
+        name: data
         required: true
         schema:
-          type: string
-      - description: Имя пользователя
-        in: body
-        name: username
-        required: true
-        schema:
-          type: string
-      - description: Пароль пользователя
-        in: body
-        name: password
-        required: true
-        schema:
-          type: string
+          $ref: '#/definitions/internal_auth.RegisterRequest'
       produces:
       - application/json
       responses:
         "200":
-          description: JWT токен после успешной регистрации
+          description: message" "Registration successful! Please check your email
+            to confirm.
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Некорректные данные
+          schema:
+            $ref: '#/definitions/internal_auth.ErrorResponse'
+        "500":
+          description: Ошибка регистрации
+          schema:
+            $ref: '#/definitions/internal_auth.ErrorResponse'
+      summary: Регистрация нового пользователя
+      tags:
+      - auth
+  /resend-confirmation:
+    post:
+      consumes:
+      - application/json
+      description: Этот эндпоинт позволяет повторно отправить письмо для подтверждения
+        почты.
+      parameters:
+      - description: Email для повторной отправки подтверждения
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/internal_auth.ResendConfirmationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Письмо с подтверждением отправлено повторно
           schema:
             type: string
         "400":
-          description: Ошибка регистрации
+          description: Некорректные данные
+          schema:
+            type: string
+        "404":
+          description: Пользователь не найден
           schema:
             type: string
         "500":
           description: Ошибка сервера
           schema:
             type: string
-      summary: Регистрация нового пользователя
+      summary: Повторная отправка письма с подтверждением
       tags:
       - auth
 securityDefinitions:
