@@ -58,7 +58,6 @@ func (h *AuthHandler) ResendConfirmation(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Попытка повторной отправки письма
 	err := h.service.ResendConfirmationEmail(req.Email)
 	if err != nil {
 		if err.Error() == "user not found" {

@@ -9,10 +9,7 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "contact": {
-            "name": "Техническая поддержка",
-            "email": "ramaro@internet.ru"
-        },
+        "contact": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -50,51 +47,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Token is missing",
                         "schema": {
-                            "$ref": "#/definitions/internal_auth.ErrorResponse"
+                            "$ref": "#/definitions/auth.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Invalid or expired token",
                         "schema": {
-                            "$ref": "#/definitions/internal_auth.ErrorResponse"
+                            "$ref": "#/definitions/auth.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Failed to activate user",
                         "schema": {
-                            "$ref": "#/definitions/internal_auth.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/generate-token": {
-            "get": {
-                "description": "Генерирует новый JWT токен, используя переданный email в качестве данных. Токен будет действителен в течение 24 часов.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "auth"
-                ],
-                "summary": "Генерация JWT токена",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Email для включения в JWT токен",
-                        "name": "email",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Успешно сгенерированный JWT токен",
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/auth.ErrorResponse"
                         }
                     }
                 }
@@ -120,7 +85,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_auth.LoginRequest"
+                            "$ref": "#/definitions/auth.LoginRequest"
                         }
                     }
                 ],
@@ -137,19 +102,116 @@ const docTemplate = `{
                     "400": {
                         "description": "Некорректные данные",
                         "schema": {
-                            "$ref": "#/definitions/internal_auth.ErrorResponse"
+                            "$ref": "#/definitions/auth.ErrorResponse"
                         }
                     },
                     "401": {
                         "description": "Неверные учетные данные",
                         "schema": {
-                            "$ref": "#/definitions/internal_auth.ErrorResponse"
+                            "$ref": "#/definitions/auth.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Ошибка сервера",
                         "schema": {
-                            "$ref": "#/definitions/internal_auth.ErrorResponse"
+                            "$ref": "#/definitions/auth.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/photos/upload": {
+            "post": {
+                "description": "Upload a photo with an optional description. The uploaded photo is associated with the authenticated user.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Photos"
+                ],
+                "summary": "Uploads a new photo",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "Photo file to upload",
+                        "name": "photo",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Description for the photo",
+                        "name": "Description",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns the uploaded photo details including the generated URL",
+                        "schema": {
+                            "$ref": "#/definitions/photo.Photo"
+                        }
+                    },
+                    "400": {
+                        "description": "Error uploading file or invalid input",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized access",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/photos/{id}": {
+            "get": {
+                "description": "Fetch photo details by its unique identifier.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Photos"
+                ],
+                "summary": "Retrieves a photo by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID of the photo to retrieve",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Returns the photo details including the full URL",
+                        "schema": {
+                            "$ref": "#/definitions/photo.Photo"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid photo ID",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Photo not found",
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 }
@@ -175,7 +237,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_auth.RegisterRequest"
+                            "$ref": "#/definitions/auth.RegisterRequest"
                         }
                     }
                 ],
@@ -192,13 +254,13 @@ const docTemplate = `{
                     "400": {
                         "description": "Некорректные данные",
                         "schema": {
-                            "$ref": "#/definitions/internal_auth.ErrorResponse"
+                            "$ref": "#/definitions/auth.ErrorResponse"
                         }
                     },
                     "500": {
                         "description": "Ошибка регистрации",
                         "schema": {
-                            "$ref": "#/definitions/internal_auth.ErrorResponse"
+                            "$ref": "#/definitions/auth.ErrorResponse"
                         }
                     }
                 }
@@ -224,7 +286,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/internal_auth.ResendConfirmationRequest"
+                            "$ref": "#/definitions/auth.ResendConfirmationRequest"
                         }
                     }
                 ],
@@ -258,7 +320,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "InstaSpace_internal_auth.ErrorResponse": {
+        "auth.ErrorResponse": {
             "type": "object",
             "properties": {
                 "message": {
@@ -266,7 +328,7 @@ const docTemplate = `{
                 }
             }
         },
-        "InstaSpace_internal_auth.LoginRequest": {
+        "auth.LoginRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -279,7 +341,7 @@ const docTemplate = `{
                 }
             }
         },
-        "InstaSpace_internal_auth.RegisterRequest": {
+        "auth.RegisterRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -296,7 +358,7 @@ const docTemplate = `{
                 }
             }
         },
-        "InstaSpace_internal_auth.ResendConfirmationRequest": {
+        "auth.ResendConfirmationRequest": {
             "type": "object",
             "properties": {
                 "email": {
@@ -304,70 +366,42 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_auth.ErrorResponse": {
+        "photo.Photo": {
             "type": "object",
             "properties": {
-                "message": {
+                "created_at": {
+                    "description": "Дата и время создания фото",
                     "type": "string"
-                }
-            }
-        },
-        "internal_auth.LoginRequest": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "user@example.com"
                 },
-                "password": {
-                    "type": "string",
-                    "example": "password123"
-                }
-            }
-        },
-        "internal_auth.RegisterRequest": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string",
-                    "example": "user@example.com"
-                },
-                "password": {
-                    "type": "string",
-                    "example": "password123"
-                },
-                "username": {
-                    "type": "string",
-                    "example": "john_doe"
-                }
-            }
-        },
-        "internal_auth.ResendConfirmationRequest": {
-            "type": "object",
-            "properties": {
-                "email": {
+                "description": {
+                    "description": "Описание изображения",
                     "type": "string"
+                },
+                "id": {
+                    "description": "Идентификатор фото",
+                    "type": "integer"
+                },
+                "image_url": {
+                    "description": "URL изображения",
+                    "type": "string"
+                },
+                "user_id": {
+                    "description": "Идентификатор пользователя, загрузившего фото",
+                    "type": "integer"
                 }
             }
-        }
-    },
-    "securityDefinitions": {
-        "ApiKeyAuth": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
         }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
-	Host:             "localhost:8080",
-	BasePath:         "/",
+	Version:          "",
+	Host:             "",
+	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Insta Space API",
-	Description:      "Документация для API InstaSpace, включающая функционал авторизации и регистрации.",
+	Title:            "",
+	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",
