@@ -11,9 +11,9 @@ type Repository interface {
 
 // Service представляет интерфейс для бизнес-логики авторизации
 type Service interface {
-	ResendConfirmationEmail(email string) error                    // Повторно отправляет подтверждающее письмо
-	RegisterUser(email, username, password string) (string, error) // Регистрирует нового пользователя и отправляет подтверждение
-	AuthenticateUser(email, password string) (string, error)       // Аутентифицирует пользователя и возвращает токен
-	SendConfirmationEmail(email, token string) error               // Отправляет подтверждающее письмо по email
-	ActivateUser(email string) error                               // Активирует пользователя, используя токен
+	ResendConfirmationEmail(email string) error                      // Повторно отправляет подтверждающее письмо
+	RegisterUser(email, username, password string) (string, error)   // Регистрирует нового пользователя и отправляет подтверждение
+	AuthenticateUser(email, password string) (string, string, error) // Аутентифицирует пользователя и возвращает токен
+	SendConfirmationEmail(email, token string) error                 // Отправляет подтверждающее письмо по email
+	ActivateUser(email string) error                                 // Активирует пользователя, используя токен
 }

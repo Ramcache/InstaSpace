@@ -139,18 +139,22 @@ func (s *AuthService) RegisterUser(email, username, password string) (string, er
 // @Failure 400 {string} string "Неверные учетные данные"
 // @Failure 500 {string} string "Ошибка сервера"
 // @Router /login [post]
-func (s *AuthService) AuthenticateUser(email, password string) (string, error) {
+func (s *AuthService) AuthenticateUser(email, password string) (string, string, error) {
 	user, err := s.repo.GetUserByEmail(email)
 	if err != nil || !utils.CheckPasswordHash(password, user.Password) {
-		return "", errors.New("invalid credentials")
+		return "", "", errors.New("invalid credentials")
 	}
 
-	// Проверяем, активирован ли аккаунт
 	if !user.IsActive {
-		return "", errors.New("account not activated")
+		return "", "", errors.New("account not activated")
 	}
 
-	return jwt.GenerateJWT(user.Email)
+	token, err := jwt.GenerateJWT(user.Email)
+	if err != nil {
+		return "", "", errors.New("failed to generate token")
+	}
+
+	return token, user.Username, nil
 }
 
 // ConfirmEmail godoc

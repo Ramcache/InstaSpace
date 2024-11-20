@@ -151,21 +151,53 @@ func (h *AuthHandler) ConfirmEmail(w http.ResponseWriter, r *http.Request) {
 // @Failure 401 {object} ErrorResponse "Неверные учетные данные"
 // @Failure 500 {object} ErrorResponse "Ошибка сервера"
 // @Router /login [post]
+//
+//	func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
+//		var req LoginRequest
+//
+//		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+//			w.WriteHeader(http.StatusBadRequest)
+//			json.NewEncoder(w).Encode(ErrorResponse{Message: "Invalid input"})
+//			return
+//		}
+//
+//		token, err := h.service.AuthenticateUser(req.Email, req.Password)
+//		if err != nil {
+//			w.WriteHeader(http.StatusUnauthorized)
+//			json.NewEncoder(w).Encode(ErrorResponse{Message: "Invalid credentials"})
+//			return
+//		}
+//
+//		json.NewEncoder(w).Encode(map[string]string{"token": token})
+//		json.NewEncoder(w).Encode(map[string]string{"username": Username})
+//
+// }
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	var req LoginRequest
 
+	// Декодируем тело запроса в структуру LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(ErrorResponse{Message: "Invalid input"})
 		return
 	}
 
-	token, err := h.service.AuthenticateUser(req.Email, req.Password)
+	// Аутентифицируем пользователя и получаем токен и имя пользователя
+	token, username, err := h.service.AuthenticateUser(req.Email, req.Password)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
 		json.NewEncoder(w).Encode(ErrorResponse{Message: "Invalid credentials"})
 		return
 	}
 
-	json.NewEncoder(w).Encode(map[string]string{"token": token})
+	// Формируем ответ с токеном и именем пользователя
+	response := map[string]string{
+		"token":    token,
+		"username": username,
+	}
+
+	// Устанавливаем заголовок Content-Type
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
 }
