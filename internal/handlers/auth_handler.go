@@ -6,56 +6,76 @@ import (
 
 	"InstaSpace/internal/models"
 	"InstaSpace/internal/services"
+
+	"go.uber.org/zap"
 )
 
 type AuthHandler struct {
 	Service *services.AuthService
+	Logger  *zap.Logger
 }
 
-func NewAuthHandler(service *services.AuthService) *AuthHandler {
-	return &AuthHandler{Service: service}
+func NewAuthHandler(service *services.AuthService, logger *zap.Logger) *AuthHandler {
+	return &AuthHandler{
+		Service: service,
+		Logger:  logger,
+	}
 }
 
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
+	h.Logger.Info("Начало регистрации пользователя")
+
 	var user models.User
 	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		http.Error(w, "Invalid input", http.StatusBadRequest)
+		h.Logger.Warn("Некорректный ввод при регистрации", zap.Error(err))
+		http.Error(w, "Некорректный ввод", http.StatusBadRequest)
 		return
 	}
 
+	h.Logger.Info("Попытка регистрации пользователя", zap.String("email", user.Email))
 	if err := h.Service.RegisterUser(&user); err != nil {
+		h.Logger.Error("Ошибка при регистрации пользователя", zap.String("email", user.Email), zap.Error(err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
+	h.Logger.Info("Регистрация успешна", zap.String("email", user.Email))
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(map[string]string{"message": "User registered. Please verify your email!"})
+	json.NewEncoder(w).Encode(map[string]string{"message": "Успешная регистрация. Пожалуйста подтвердите email"})
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
+	h.Logger.Info("Начало аутентификации пользователя")
+
 	var creds models.User
 	if err := json.NewDecoder(r.Body).Decode(&creds); err != nil {
-		http.Error(w, "Invalid input", http.StatusBadRequest)
+		h.Logger.Warn("Некорректный ввод при логине", zap.Error(err))
+		http.Error(w, "Некорректный ввод", http.StatusBadRequest)
 		return
 	}
 
+	h.Logger.Info("Попытка аутентификации пользователя", zap.String("email", creds.Email))
 	user, err := h.Service.Authenticate(creds.Email, creds.Password)
 	if err != nil {
+		h.Logger.Warn("Ошибка аутентификации", zap.String("email", creds.Email), zap.Error(err))
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	token, err := h.Service.GenerateToken(user)
 	if err != nil {
-		http.Error(w, "Could not generate token", http.StatusInternalServerError)
+		h.Logger.Error("Ошибка генерации токена", zap.String("email", user.Email), zap.Error(err))
+		http.Error(w, "Ошибка генерации токена", http.StatusInternalServerError)
 		return
 	}
 
+	h.Logger.Info("Аутентификация успешна", zap.String("email", user.Email))
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"token": token})
 }
 
 func (h *AuthHandler) Profile(w http.ResponseWriter, r *http.Request) {
+	h.Logger.Info("Запрос к защищенному маршруту (Profile)")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"message": "This is a protected route!"})
 }

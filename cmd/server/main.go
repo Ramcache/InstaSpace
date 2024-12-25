@@ -1,6 +1,8 @@
 package main
 
 import (
+	"InstaSpace/pkg/logger"
+	"go.uber.org/zap"
 	"log"
 	"net/http"
 
@@ -13,34 +15,40 @@ import (
 )
 
 func main() {
-	// Загружаем конфигурацию
 	cfg := config.LoadConfig()
 
-	// Подключаемся к базе данных
+	zapLogger, err := logger.NewLogger()
+	if err != nil {
+		log.Fatalf("Не удалось инициализировать логгер: %v", err)
+	}
+	defer zapLogger.Sync()
+
+	zapLogger.Info("Запуск приложения")
+
 	db, err := config.ConnectDB(cfg)
 	if err != nil {
-		log.Fatalf("Could not connect to the database: %v", err)
+		zapLogger.Fatal("Ошибка подключения к базе данных", zap.Error(err))
 	}
 	defer db.Close()
 
-	log.Println("Database connection established successfully!")
+	zapLogger.Info("Подключение к базе данных успешно установлено")
 
-	// Инициализация слоев
 	userRepo := repositories.NewUserRepository(db)
 	authService := services.NewAuthService(userRepo, cfg.JWTSecret)
-	authHandler := handlers.NewAuthHandler(authService)
+	authHandler := handlers.NewAuthHandler(authService, zapLogger)
 
-	// Настройка роутов
+	photoRepo := repositories.NewPhotoRepository(db)
+	photoService := services.NewPhotoService(photoRepo)
+	photoHandler := handlers.NewPhotoHandler(photoService, zapLogger)
+
 	r := mux.NewRouter()
 	r.HandleFunc("/register", authHandler.Register).Methods("POST")
 	r.HandleFunc("/login", authHandler.Login).Methods("POST")
 
-	// Защищенные маршруты
-	secure := r.PathPrefix("/secure").Subrouter()
-	secure.Use(middleware.JWTMiddleware(cfg.JWTSecret))
-	secure.HandleFunc("/profile", authHandler.Profile).Methods("GET")
+	secure := r.PathPrefix("/api").Subrouter()
+	secure.Use(middleware.JWTMiddleware(cfg.JWTSecret, zapLogger))
+	secure.HandleFunc("/photos", photoHandler.UploadPhoto).Methods("POST")
 
-	// Запуск сервера
-	log.Println("Server is running on port 8080")
+	zapLogger.Info("Сервер запущен на порту 8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
 }

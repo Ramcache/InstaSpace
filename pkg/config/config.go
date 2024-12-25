@@ -10,7 +10,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// Config - структура для конфигурации
 type Config struct {
 	DBUser     string
 	DBPassword string
@@ -20,7 +19,6 @@ type Config struct {
 	JWTSecret  string
 }
 
-// LoadConfig - загружает конфигурацию из .env
 func LoadConfig() *Config {
 	if err := godotenv.Load(); err != nil {
 		log.Println("No .env file found, using environment variables")
@@ -36,12 +34,9 @@ func LoadConfig() *Config {
 	}
 }
 
-// ConnectDB - подключение к базе данных
 func ConnectDB(cfg *Config) (*pgxpool.Pool, error) {
-	// Создаем валидный контекст
 	ctx := context.Background()
 
-	// Формируем строку подключения
 	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		cfg.DBUser,
 		cfg.DBPassword,
@@ -50,7 +45,6 @@ func ConnectDB(cfg *Config) (*pgxpool.Pool, error) {
 		cfg.DBName,
 	)
 
-	// Подключаемся к базе данных
 	pool, err := pgxpool.New(ctx, dsn)
 	if err != nil {
 		return nil, fmt.Errorf("unable to connect to database: %w", err)
