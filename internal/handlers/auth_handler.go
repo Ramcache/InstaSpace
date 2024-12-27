@@ -56,6 +56,12 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	h.Logger.Info("Попытка аутентификации пользователя", zap.String("email", creds.Email))
 	user, err := h.Service.Authenticate(creds.Email, creds.Password)
+	if creds.Password == "" {
+		h.Logger.Warn("Пустой пароль при логине", zap.String("email", creds.Email))
+		http.Error(w, "Пароль не может быть пустым", http.StatusBadRequest)
+		return
+	}
+
 	if err != nil {
 		h.Logger.Warn("Ошибка аутентификации", zap.String("email", creds.Email), zap.Error(err))
 		http.Error(w, err.Error(), http.StatusUnauthorized)

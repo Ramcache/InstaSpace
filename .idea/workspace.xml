@@ -5,15 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4f691e55-0d76-4466-a530-7e83d5dbf2ab" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/cmd/server/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handlers/auth_handler.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/models/models.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/repositories/auth_repository.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/services/auth_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/config/config.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pkg/middleware/middleware.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/test/auth_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/test/main_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/test/photo_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/handlers/auth_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handlers/auth_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/handlers/photo_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handlers/photo_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/models/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/user.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pkg/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/config/config.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,8 +52,22 @@
     "Docker.docker-compose.yml: Compose Deployment.executor": "Run",
     "Go Build.go build InstaSpace/cmd.executor": "Run",
     "Go Build.go build InstaSpace/cmd/server.executor": "Run",
+    "Go Build.go build main.go.executor": "Run",
+    "Go Test.TestAuthHandler_Register in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestLoginUser in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestLoginUser/Успешный_вход in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestRegisterUser in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestRegisterUser/Успешная_регистрация in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestUploadPhoto in InstaSpace/internal/handlers.executor": "Run",
+    "Go Test.TestUploadPhoto in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestUploadPhoto/Error_Creating_Directory in InstaSpace/internal/test.executor": "Run",
+    "Go Test.auth_test.go.executor": "Run",
     "Go Test.go test InstaSpace/internal/auth.executor": "Run",
     "Go Test.go test InstaSpace/internal/photo.executor": "Run",
+    "Go Test.go test InstaSpace/internal/test.executor": "Run",
+    "Go Test.go test test.executor": "Run",
+    "Go Test.main_test.go.executor": "Run",
+    "Go Test.photo_handler_test.go.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.go.formatter.settings.were.checked": "true",
@@ -79,49 +94,69 @@
       <recent name="R:\ProjectsGo\InstaSpace\cmd" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="R:\ProjectsGo\InstaSpace\internal\test" />
       <recent name="R:\ProjectsGo\InstaSpace\migrations" />
       <recent name="R:\ProjectsGo\InstaSpace\internal\photo" />
       <recent name="R:\ProjectsGo\InstaSpace\cmd" />
       <recent name="R:\ProjectsGo\InstaSpace\cmd\app" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Build.go build InstaSpace/cmd/server">
-    <configuration name="go build InstaSpace/cmd" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Go Test.TestUploadPhotoHandler in InstaSpace/internal/test">
+    <configuration name="TestLoginUser in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="InstaSpace" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="InstaSpace/cmd" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/cmd/main.go" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go build InstaSpace/cmd/server" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="InstaSpace" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="InstaSpace/cmd/server" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$/cmd/server/main.go" />
-      <method v="2" />
-    </configuration>
-    <configuration name="go test InstaSpace/internal/auth" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="InstaSpace" />
-      <working_directory value="$PROJECT_DIR$/internal/auth" />
+      <working_directory value="$PROJECT_DIR$/internal/test" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <package value="InstaSpace/internal/auth" />
+      <package value="InstaSpace/internal/test" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
+      <pattern value="^\QTestLoginUser\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="go test InstaSpace/internal/photo" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestLoginUser/Успешный_вход in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="InstaSpace" />
-      <working_directory value="$PROJECT_DIR$/internal/photo" />
+      <working_directory value="$PROJECT_DIR$/internal/test" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
-      <package value="InstaSpace/internal/photo" />
+      <package value="InstaSpace/internal/test" />
       <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestLoginUser\E$/^\QУспешный_вход\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestRegisterUser in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="InstaSpace" />
+      <working_directory value="$PROJECT_DIR$/internal/test" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="InstaSpace/internal/test" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestRegisterUser\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestUploadPhotoHandler in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="InstaSpace" />
+      <working_directory value="$PROJECT_DIR$/internal/test" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="InstaSpace/internal/test" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestUploadPhotoHandler\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go test test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="InstaSpace" />
+      <working_directory value="$PROJECT_DIR$/internal/test" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="DIRECTORY" />
+      <package value="InstaSpace/internal/test" />
+      <directory value="$PROJECT_DIR$/internal/test" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
       <method v="2" />
@@ -132,21 +167,13 @@
       </deployment>
       <method v="2" />
     </configuration>
-    <configuration name="docker-compose.yml: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
-      <deployment type="docker-compose.yml">
-        <settings>
-          <option name="sourceFilePath" value="docker-compose.yml" />
-        </settings>
-      </deployment>
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Build.go build InstaSpace/cmd/server" />
-        <item itemvalue="Go Build.go build InstaSpace/cmd" />
-        <item itemvalue="Docker.docker-compose.yml: Compose Deployment" />
-        <item itemvalue="Go Test.go test InstaSpace/internal/photo" />
-        <item itemvalue="Go Test.go test InstaSpace/internal/auth" />
+        <item itemvalue="Go Test.TestUploadPhotoHandler in InstaSpace/internal/test" />
+        <item itemvalue="Go Test.go test test" />
+        <item itemvalue="Go Test.TestLoginUser in InstaSpace/internal/test" />
+        <item itemvalue="Go Test.TestLoginUser/Успешный_вход in InstaSpace/internal/test" />
+        <item itemvalue="Go Test.TestRegisterUser in InstaSpace/internal/test" />
       </list>
     </recent_temporary>
   </component>

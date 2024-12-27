@@ -26,6 +26,13 @@ func NewPhotoHandler(service services.PhotoServiceInterface, logger *zap.Logger)
 func (h *PhotoHandler) UploadPhoto(w http.ResponseWriter, r *http.Request) {
 	h.Logger.Info("Начало загрузки фото")
 
+	userID, err := strconv.Atoi(r.Header.Get("user_id"))
+	if err != nil || userID == 0 {
+		h.Logger.Warn("Некорректный user_id", zap.Error(err))
+		http.Error(w, "Invalid user_id", http.StatusBadRequest)
+		return
+	}
+
 	file, header, err := r.FormFile("file")
 	if err != nil {
 		h.Logger.Warn("Файл не найден", zap.Error(err))
@@ -59,8 +66,15 @@ func (h *PhotoHandler) UploadPhoto(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Could not create directory", http.StatusInternalServerError)
 		return
 	}
+
 	uniqueFileName := time.Now().Format("20060102150405") + "_" + header.Filename
 	filePath := filepath.Join(uploadDir, uniqueFileName)
+
+	if _, err := os.Stat(uploadDir); os.IsPermission(err) {
+		h.Logger.Error("Недостаточно прав для записи в директорию", zap.Error(err))
+		http.Error(w, "Permission denied for directory", http.StatusInternalServerError)
+		return
+	}
 
 	dst, err := os.Create(filePath)
 	if err != nil {
@@ -84,13 +98,6 @@ func (h *PhotoHandler) UploadPhoto(w http.ResponseWriter, r *http.Request) {
 	h.Logger.Info("Файл успешно загружен", zap.String("file", filePath))
 
 	description := r.FormValue("description")
-
-	userID, err := strconv.Atoi(r.Header.Get("user_id"))
-	if err != nil || userID == 0 {
-		h.Logger.Warn("Некорректный user_id", zap.Error(err))
-		http.Error(w, "Invalid user_id", http.StatusBadRequest)
-		return
-	}
 
 	photo := models.Photo{
 		UserID:      userID,

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
@@ -35,19 +36,30 @@ func LoadConfig() *Config {
 }
 
 func ConnectDB(cfg *Config) (*pgxpool.Pool, error) {
-	ctx := context.Background()
-
-	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
 		cfg.DBUser,
 		cfg.DBPassword,
 		cfg.DBHost,
 		cfg.DBPort,
 		cfg.DBName,
 	)
-
-	pool, err := pgxpool.New(ctx, dsn)
+	pool, err := pgxpool.New(context.Background(), dsn)
 	if err != nil {
-		return nil, fmt.Errorf("unable to connect to database: %w", err)
+		return nil, fmt.Errorf("не удалось подключиться к базе данных: %w", err)
 	}
+
+	if err := PingDB(pool); err != nil {
+		log.Printf("Ошибка при подключении к базе данных: %v", err)
+		return nil, fmt.Errorf("база данных недоступна: %w", err)
+	}
+
+	log.Println("Подключение к базе данных успешно установлено")
 	return pool, nil
+}
+
+func PingDB(pool *pgxpool.Pool) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	return pool.Ping(ctx)
 }
