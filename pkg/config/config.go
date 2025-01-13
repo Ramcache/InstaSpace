@@ -17,6 +17,7 @@ type Config struct {
 	DBName     string
 	DBHost     string
 	DBPort     string
+	ServerPort string
 	JWTSecret  string
 }
 
@@ -31,6 +32,7 @@ func LoadConfig() *Config {
 		DBName:     os.Getenv("DB_NAME"),
 		DBHost:     os.Getenv("DB_HOST"),
 		DBPort:     os.Getenv("DB_PORT"),
+		ServerPort: os.Getenv("SERVER_PORT"),
 		JWTSecret:  os.Getenv("JWT_SECRET"),
 	}
 }
