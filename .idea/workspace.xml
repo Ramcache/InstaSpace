@@ -5,16 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4f691e55-0d76-4466-a530-7e83d5dbf2ab" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/internal/test/auth_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/test/main_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/test/photo_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/handlers/auth_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handlers/auth_handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/handlers/photo_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handlers/photo_handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/models/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pkg/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/pkg/config/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/repositories/auth_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/repositories/auth_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/services/auth_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/auth_service.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,48 +40,49 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultGoTemplateProperty": "Go File",
-    "Docker.docker-compose.yml: Compose Deployment.executor": "Run",
-    "Go Build.go build InstaSpace/cmd.executor": "Run",
-    "Go Build.go build InstaSpace/cmd/server.executor": "Run",
-    "Go Build.go build main.go.executor": "Run",
-    "Go Test.TestAuthHandler_Register in InstaSpace/internal/test.executor": "Run",
-    "Go Test.TestLoginUser in InstaSpace/internal/test.executor": "Run",
-    "Go Test.TestLoginUser/Успешный_вход in InstaSpace/internal/test.executor": "Run",
-    "Go Test.TestRegisterUser in InstaSpace/internal/test.executor": "Run",
-    "Go Test.TestRegisterUser/Успешная_регистрация in InstaSpace/internal/test.executor": "Run",
-    "Go Test.TestUploadPhoto in InstaSpace/internal/handlers.executor": "Run",
-    "Go Test.TestUploadPhoto in InstaSpace/internal/test.executor": "Run",
-    "Go Test.TestUploadPhoto/Error_Creating_Directory in InstaSpace/internal/test.executor": "Run",
-    "Go Test.auth_test.go.executor": "Run",
-    "Go Test.go test InstaSpace/internal/auth.executor": "Run",
-    "Go Test.go test InstaSpace/internal/photo.executor": "Run",
-    "Go Test.go test InstaSpace/internal/test.executor": "Run",
-    "Go Test.go test test.executor": "Run",
-    "Go Test.main_test.go.executor": "Run",
-    "Go Test.photo_handler_test.go.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.go.formatter.settings.were.checked": "true",
-    "RunOnceActivity.go.migrated.go.modules.settings": "true",
-    "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
-    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
-    "git-widget-placeholder": "main",
-    "go.import.settings.migrated": "true",
-    "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "R:/ProjectsGo/InstaSpace",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
+    &quot;Docker.docker-compose.yml: Compose Deployment.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build InstaSpace/cmd.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build InstaSpace/cmd/server.executor&quot;: &quot;Run&quot;,
+    &quot;Go Build.go build main.go.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestAuthHandler_Register in InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestLoginUser in InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestLoginUser/Успешный_вход in InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRegisterUser in InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestRegisterUser/Успешная_регистрация in InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUploadPhoto in InstaSpace/internal/handlers.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUploadPhoto in InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUploadPhoto/Error_Creating_Directory in InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.TestUploadPhotoHandler in InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.auth_test.go.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.go test InstaSpace/internal/auth.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.go test InstaSpace/internal/photo.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.go test InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.go test test.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.main_test.go.executor&quot;: &quot;Run&quot;,
+    &quot;Go Test.photo_handler_test.go.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.automatic.dependencies.download&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
+    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;R:/ProjectsGo/InstaSpace&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "postgresql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;postgresql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="R:\ProjectsGo\InstaSpace\internal\photo" />

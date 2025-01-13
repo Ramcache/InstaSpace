@@ -11,16 +11,23 @@ import (
 )
 
 type AuthService struct {
-	Repository *repositories.UserRepository
+	Repository repositories.AuthRepositoryInterface
 	JWTSecret  string
 }
 
-func NewAuthService(repo *repositories.UserRepository, jwtSecret string) *AuthService {
+func NewAuthService(repo repositories.AuthRepositoryInterface, jwtSecret string) *AuthService {
 	return &AuthService{
 		Repository: repo,
 		JWTSecret:  jwtSecret,
 	}
 }
+
+type AuthServiceInterface interface {
+	RegisterUser(user *models.User) error
+	Authenticate(email, password string) (*models.User, error)
+	GenerateToken(user *models.User) (string, error)
+}
+
 func (s *AuthService) RegisterUser(user *models.User) error {
 	existingUser, _ := s.Repository.GetByEmail(user.Email)
 	if existingUser != nil {

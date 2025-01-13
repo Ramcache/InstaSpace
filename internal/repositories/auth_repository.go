@@ -14,6 +14,11 @@ func NewUserRepository(db *pgxpool.Pool) *UserRepository {
 	return &UserRepository{DB: db}
 }
 
+type AuthRepositoryInterface interface {
+	Create(user *models.User) error
+	GetByEmail(email string) (*models.User, error)
+}
+
 func (r *UserRepository) Create(user *models.User) error {
 	query := "INSERT INTO users (email, password, verified) VALUES ($1, $2, $3) RETURNING id"
 	return r.DB.QueryRow(context.Background(), query, user.Email, user.Password, user.Verified).Scan(&user.ID)
