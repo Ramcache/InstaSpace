@@ -22,13 +22,15 @@ type CommentServiceInterface interface {
 	DeleteComment(ctx context.Context, commentID, userID int) error
 }
 
+var (
+	ErrInvalidForeignKey = errors.New("violates foreign key constraint")
+)
+
 func (s *CommentService) CreateComment(ctx context.Context, comment *models.Comment) (int, error) {
-	// Простая валидация
 	if comment.UserID == 0 || comment.PhotoID == 0 || comment.Content == "" {
 		return 0, errors.New("missing required fields")
 	}
 
-	// Создаем комментарий через репозиторий
 	return s.Repo.CreateComment(ctx, comment)
 }
 

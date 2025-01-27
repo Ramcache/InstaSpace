@@ -58,11 +58,22 @@ func TestMain(m *testing.M) {
 	photoService = services.NewPhotoService(photoRepo)
 	photoHandler := handlers.NewPhotoHandler(photoService, zapLogger)
 
-	r.HandleFunc("/api/photos", photoHandler.UploadPhoto).Methods("POST")
+	commentRepo := repositories.NewCommentRepository(db)
+	commentService = services.NewCommentService(commentRepo)
+	commentHandler := handlers.NewCommentHandler(commentService, zapLogger)
+
 	testServer = httptest.NewServer(r)
 	defer testServer.Close()
+
 	r.HandleFunc("/register", authHandler.Register).Methods("POST")
 	r.HandleFunc("/login", authHandler.Login).Methods("POST")
+
+	r.HandleFunc("/api/photos", photoHandler.UploadPhoto).Methods("POST")
+
+	r.HandleFunc("/api/comments", commentHandler.CreateComment).Methods("POST")
+	r.HandleFunc("/api/comments/{photoID}", commentHandler.GetCommentsByPhotoID).Methods("GET")
+	r.HandleFunc("/api/comments/{id}/edit", commentHandler.UpdateComment).Methods("PUT")
+	r.HandleFunc("/api/comments/{id}/delete", commentHandler.DeleteComment).Methods("DELETE")
 
 	testServer = httptest.NewServer(r)
 	defer testServer.Close()
