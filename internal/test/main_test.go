@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/joho/godotenv"
 	"log"
+	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
@@ -72,7 +73,8 @@ func TestMain(m *testing.M) {
 	messageHandler := handlers.NewMessageHandler(messageService, zapLogger)
 
 	r.HandleFunc("/api/messages", messageHandler.SendMessage).Methods("POST")
-	r.HandleFunc("/api/messages", messageHandler.GetMessages).Methods("GET")
+	r.HandleFunc("/api/messages/{conversationID}", messageHandler.GetMessages).Methods("GET")
+	r.HandleFunc("/api/messages/{messageID}", messageHandler.DeleteMessageHandler).Methods(http.MethodDelete)
 
 	r.HandleFunc("/register", authHandler.Register).Methods("POST")
 	r.HandleFunc("/login", authHandler.Login).Methods("POST")

@@ -3,6 +3,7 @@ package repositories
 import (
 	"InstaSpace/internal/models"
 	"context"
+	"errors"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -43,6 +44,15 @@ func (r *MessageRepository) SendMessage(ctx context.Context, conversationID, sen
 }
 
 func (r *MessageRepository) GetMessages(ctx context.Context, conversationID int) ([]models.Message, error) {
+	var exists bool
+	err := r.DB.QueryRow(ctx, "SELECT EXISTS (SELECT 1 FROM conversations WHERE id=$1)", conversationID).Scan(&exists)
+	if err != nil {
+		return nil, err
+	}
+	if !exists {
+		return nil, errors.New("conversation not found")
+	}
+
 	rows, err := r.DB.Query(ctx, `
 		SELECT id, conversation_id, sender_id, content, created_at 
 		FROM messages WHERE conversation_id = $1 ORDER BY created_at ASC`, conversationID)
@@ -60,4 +70,19 @@ func (r *MessageRepository) GetMessages(ctx context.Context, conversationID int)
 		messages = append(messages, msg)
 	}
 	return messages, nil
+}
+
+func (r *MessageRepository) DeleteMessage(ctx context.Context, messageID int) error {
+	var exists bool
+	err := r.DB.QueryRow(ctx, "SELECT EXISTS (SELECT 1 FROM messages WHERE id=$1)", messageID).Scan(&exists)
+	if err != nil {
+		return err
+	}
+	if !exists {
+		return errors.New("message not found")
+	}
+
+	// Удаляем сообщение
+	_, err = r.DB.Exec(ctx, "DELETE FROM messages WHERE id = $1", messageID)
+	return err
 }

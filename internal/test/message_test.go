@@ -68,6 +68,56 @@ func TestSendMessage(t *testing.T) {
 func TestGetMessages(t *testing.T) {
 	ctx := context.Background()
 
+	_, err := db.Exec(ctx, "TRUNCATE TABLE messages, conversations, users RESTART IDENTITY CASCADE")
+	require.NoError(t, err, "Не удалось очистить таблицы")
+
+	_, err = db.Exec(ctx, `
+		INSERT INTO users (id, email, password, username) VALUES 
+		(1, 'user1@example.com', 'hashedpassword1', 'user1'),
+		(2, 'user2@example.com', 'hashedpassword2', 'user2')
+	`)
+	require.NoError(t, err, "Не удалось создать тестовых пользователей")
+
+	_, err = db.Exec(ctx, "INSERT INTO conversations (id, user1_id, user2_id) VALUES (1, 1, 2)")
+	require.NoError(t, err, "Не удалось создать тестовую переписку")
+
+	_, err = db.Exec(ctx, "INSERT INTO messages (conversation_id, sender_id, content) VALUES ($1, $2, $3)", 1, 1, "Test message")
+	require.NoError(t, err, "Не удалось добавить сообщение")
+
+	testCases := []struct {
+		Name         string
+		URL          string
+		ExpectedCode int
+		ShouldError  bool
+	}{
+		{
+			Name:         "Успешное получение сообщений",
+			URL:          "/api/messages/1", // ✅ Исправлено
+			ExpectedCode: http.StatusOK,
+			ShouldError:  false,
+		},
+		{
+			Name:         "Ошибка: Переписка не найдена",
+			URL:          "/api/messages/999", // ✅ Ошибочный ID в URL
+			ExpectedCode: http.StatusBadRequest,
+			ShouldError:  true,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.Name, func(t *testing.T) {
+			resp, err := http.Get(testServer.URL + tc.URL) // ✅ Передаем conversationID в URL
+			require.NoError(t, err, "Ошибка выполнения HTTP запроса")
+			defer resp.Body.Close()
+
+			assert.Equal(t, tc.ExpectedCode, resp.StatusCode, "Некорректный HTTP код ответа")
+		})
+	}
+}
+
+func TestDeleteMessage(t *testing.T) {
+	ctx := context.Background()
+
 	// Очистка таблиц перед тестами
 	_, err := db.Exec(ctx, "TRUNCATE TABLE messages, conversations, users RESTART IDENTITY CASCADE")
 	require.NoError(t, err, "Не удалось очистить таблицы")
@@ -85,24 +135,27 @@ func TestGetMessages(t *testing.T) {
 	require.NoError(t, err, "Не удалось создать тестовую переписку")
 
 	// Вставка тестового сообщения
-	_, err = db.Exec(ctx, "INSERT INTO messages (conversation_id, sender_id, content) VALUES ($1, $2, $3)", 1, 1, "Test message")
+	_, err = db.Exec(ctx, "INSERT INTO messages (id, conversation_id, sender_id, content) VALUES (1, 1, 1, 'Test message')")
 	require.NoError(t, err, "Не удалось добавить сообщение")
 
 	testCases := []struct {
 		Name         string
 		URL          string
+		Method       string
 		ExpectedCode int
 		ShouldError  bool
 	}{
 		{
-			Name:         "Успешное получение сообщений",
-			URL:          "/api/messages?conversationID=1",
+			Name:         "Успешное удаление сообщения",
+			URL:          "/api/messages/1",
+			Method:       "DELETE",
 			ExpectedCode: http.StatusOK,
 			ShouldError:  false,
 		},
 		{
-			Name:         "Ошибка: Переписка не найдена",
-			URL:          "/api/messages?conversationID=999",
+			Name:         "Ошибка: Удаление несуществующего сообщения",
+			URL:          "/api/messages/999",
+			Method:       "DELETE",
 			ExpectedCode: http.StatusBadRequest,
 			ShouldError:  true,
 		},
@@ -110,7 +163,11 @@ func TestGetMessages(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.Name, func(t *testing.T) {
-			resp, err := http.Get(testServer.URL + tc.URL)
+			req, err := http.NewRequest(tc.Method, testServer.URL+tc.URL, nil)
+			require.NoError(t, err, "Ошибка создания HTTP запроса")
+
+			client := &http.Client{}
+			resp, err := client.Do(req)
 			require.NoError(t, err, "Ошибка выполнения HTTP запроса")
 			defer resp.Body.Close()
 

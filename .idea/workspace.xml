@@ -5,32 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4f691e55-0d76-4466-a530-7e83d5dbf2ab" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/internal/handlers/message_handler.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handlers/photo_likes_handler.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/handlers/ws_handler.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/models/conversation.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/models/message.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/models/photo_likes.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/repositories/message_repository.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/repositories/photo_likes_repository.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/services/message_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/services/photo_likes_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/test/photo_likes_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/test/websocket_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/server/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/server/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/handlers/auth_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handlers/auth_handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/models/comment.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/comment.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/models/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/user.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/repositories/auth_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/repositories/auth_repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/repositories/comment_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/repositories/comment_repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/test/auth_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/test/auth_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/test/comment_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/test/comment_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/handlers/message_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handlers/message_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/repositories/message_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/repositories/message_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/services/message_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/message_service.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/test/main_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/test/main_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/20241225082319_create_users_table.sql" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/20241225082319_create_users_table.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/migrations/20241225090552_create_photos_table.sql" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/20241225090552_create_photos_table.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/test/websocket_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/test/websocket_test.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,9 +56,11 @@
     "Go Test.TestCreateCommentHandler/Успешное_создание_комментария in InstaSpace/internal/test.executor": "Run",
     "Go Test.TestDeleteComment in InstaSpace/internal/test.executor": "Run",
     "Go Test.TestDeleteCommentHandler in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestDeleteMessage in InstaSpace/internal/test.executor": "Run",
     "Go Test.TestGetCommentsByPhotoID in InstaSpace/internal/test.executor": "Run",
     "Go Test.TestGetCommentsByPhotoIDHandler in InstaSpace/internal/test.executor": "Run",
     "Go Test.TestGetMessages in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestGetMessages/Ошибка:_Переписка_не_найдена in InstaSpace/internal/test.executor": "Run",
     "Go Test.TestLikeHandlers in InstaSpace/internal/test.executor": "Run",
     "Go Test.TestLikeHandlers/Ошибка:_Удаление_отсутствующего_лайка in InstaSpace/internal/test.executor": "Run",
     "Go Test.TestLikeHandlers/Успешное_добавление_лайка in InstaSpace/internal/test.executor": "Run",
@@ -135,13 +118,25 @@
       <recent name="R:\ProjectsGo\InstaSpace\cmd\app" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestGetMessages in InstaSpace/internal/test">
+  <component name="RunManager" selected="Go Test.TestDeleteMessage in InstaSpace/internal/test">
     <configuration name="go build InstaSpace/internal/test" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="InstaSpace" />
       <working_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
       <package value="InstaSpace/internal/test" />
       <directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestDeleteMessage in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="InstaSpace" />
+      <working_directory value="$PROJECT_DIR$/internal/test" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="InstaSpace/internal/test" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestDeleteMessage\E$" />
       <method v="2" />
     </configuration>
     <configuration name="TestGetMessages in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -156,19 +151,7 @@
       <pattern value="^\QTestGetMessages\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestSavePhoto in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="InstaSpace" />
-      <working_directory value="$PROJECT_DIR$/internal/test" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="InstaSpace/internal/test" />
-      <directory value="$PROJECT_DIR$/internal/test" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestSavePhoto\E$" />
-      <method v="2" />
-    </configuration>
-    <configuration name="TestSendMessage in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestGetMessages/Ошибка:_Переписка_не_найдена in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="InstaSpace" />
       <working_directory value="$PROJECT_DIR$/internal/test" />
       <root_directory value="$PROJECT_DIR$" />
@@ -177,7 +160,7 @@
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestSendMessage\E$" />
+      <pattern value="^\QTestGetMessages\E$/^\QОшибка:_Переписка_не_найдена\E$" />
       <method v="2" />
     </configuration>
     <configuration name="go test test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -199,11 +182,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.TestDeleteMessage in InstaSpace/internal/test" />
+        <item itemvalue="Go Test.TestGetMessages/Ошибка:_Переписка_не_найдена in InstaSpace/internal/test" />
         <item itemvalue="Go Test.TestGetMessages in InstaSpace/internal/test" />
-        <item itemvalue="Go Test.TestSendMessage in InstaSpace/internal/test" />
         <item itemvalue="Go Test.go test test" />
         <item itemvalue="Go Build.go build InstaSpace/internal/test" />
-        <item itemvalue="Go Test.TestSavePhoto in InstaSpace/internal/test" />
       </list>
     </recent_temporary>
   </component>

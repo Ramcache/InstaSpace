@@ -52,3 +52,7 @@ func (s *MessageService) GetMessages(ctx context.Context, conversationID int) ([
 	// Если переписка найдена, получаем её сообщения
 	return s.Repo.GetMessages(ctx, conversationID)
 }
+
+func (s *MessageService) DeleteMessage(ctx context.Context, messageID int) error {
+	return s.Repo.DeleteMessage(ctx, messageID)
+}

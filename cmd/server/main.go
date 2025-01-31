@@ -72,7 +72,9 @@ func main() {
 	secure.HandleFunc("/api/likes/count", likeHandler.GetLikeCountHandler).Methods("GET")
 
 	secure.HandleFunc("/api/messages", messageHandler.SendMessage).Methods("POST")
-	secure.HandleFunc("/api/messages", messageHandler.GetMessages).Methods("GET")
+	secure.HandleFunc("/api/messages/{conversationID}", messageHandler.GetMessages).Methods("GET")
+	secure.HandleFunc("/api/messages/{messageID}", messageHandler.DeleteMessageHandler).Methods(http.MethodDelete)
+
 	port := cfg.ServerPort
 	zapLogger.Info("Сервер запущен", zap.String("порт", port))
 	log.Fatal(http.ListenAndServe(":"+port, r))

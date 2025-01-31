@@ -4,6 +4,7 @@ import (
 	"InstaSpace/internal/services"
 	"encoding/json"
 	"errors"
+	"github.com/gorilla/mux"
 	"net/http"
 	"strconv"
 
@@ -56,8 +57,16 @@ func (h *MessageHandler) SendMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *MessageHandler) GetMessages(w http.ResponseWriter, r *http.Request) {
-	conversationID, err := strconv.Atoi(r.URL.Query().Get("conversationID"))
-	if err != nil || conversationID <= 0 {
+	vars := mux.Vars(r)
+	conversationIDStr, ok := vars["conversationID"]
+	if !ok || conversationIDStr == "" {
+		http.Error(w, "Invalid conversation ID", http.StatusBadRequest)
+		h.Logger.Error("Invalid conversation ID")
+		return
+	}
+
+	conversationID, err := strconv.Atoi(conversationIDStr)
+	if err != nil {
 		http.Error(w, "Invalid conversation ID", http.StatusBadRequest)
 		h.Logger.Error("Invalid conversation ID", zap.Error(err))
 		return
@@ -65,17 +74,40 @@ func (h *MessageHandler) GetMessages(w http.ResponseWriter, r *http.Request) {
 
 	messages, err := h.Service.GetMessages(r.Context(), conversationID)
 	if err != nil {
-		if errors.Is(err, services.ErrConversationNotFound) {
+		if err.Error() == "conversation not found" {
 			http.Error(w, "Conversation not found", http.StatusBadRequest)
-			h.Logger.Error("Failed to retrieve messages - conversation not found", zap.Error(err))
+			h.Logger.Warn("Conversation not found", zap.Int("conversationID", conversationID))
 			return
 		}
-		http.Error(w, "Failed to retrieve messages", http.StatusInternalServerError)
-		h.Logger.Error("Failed to retrieve messages", zap.Error(err))
+		http.Error(w, "Failed to get messages", http.StatusInternalServerError)
+		h.Logger.Error("Failed to get messages", zap.Error(err))
 		return
 	}
 
-	h.Logger.Info("Messages retrieved successfully", zap.Int("conversationID", conversationID))
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(messages)
+}
+
+func (h *MessageHandler) DeleteMessageHandler(w http.ResponseWriter, r *http.Request) {
+	messageID, err := strconv.Atoi(mux.Vars(r)["messageID"])
+	if err != nil {
+		h.Logger.Error("Invalid message ID", zap.Error(err))
+		http.Error(w, "Invalid message ID", http.StatusBadRequest)
+		return
+	}
+
+	err = h.Service.DeleteMessage(r.Context(), messageID)
+	if err != nil {
+		if err.Error() == "message not found" {
+			http.Error(w, "Message not found", http.StatusBadRequest)
+			return
+		}
+		h.Logger.Error("Failed to delete message", zap.Error(err))
+		http.Error(w, "Failed to delete message", http.StatusInternalServerError)
+		return
+	}
+
+	h.Logger.Info("Message deleted successfully", zap.Int("messageID", messageID))
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Message deleted successfully"})
 }
