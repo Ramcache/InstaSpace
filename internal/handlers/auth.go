@@ -10,11 +10,13 @@ import (
 	"go.uber.org/zap"
 )
 
+// AuthHandler отвечает за обработку запросов аутентификации и регистрации.
 type AuthHandler struct {
 	Service services.AuthServiceInterface
 	Logger  *zap.Logger
 }
 
+// NewAuthHandler создает новый обработчик аутентификации.
 func NewAuthHandler(service services.AuthServiceInterface, logger *zap.Logger) *AuthHandler {
 	return &AuthHandler{
 		Service: service,
@@ -22,6 +24,18 @@ func NewAuthHandler(service services.AuthServiceInterface, logger *zap.Logger) *
 	}
 }
 
+// Register регистрирует нового пользователя.
+//
+// @Summary Регистрация пользователя
+// @Description Создает нового пользователя и отправляет подтверждение по email
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param user body models.User true "Данные пользователя"
+// @Success 201 {object} map[string]string "message: Успешная регистрация. Пожалуйста подтвердите email"
+// @Failure 400 {string} string "Некорректный ввод"
+// @Failure 500 {string} string "Ошибка сервера"
+// @Router /register [post]
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	h.Logger.Info("Начало регистрации пользователя")
 
@@ -50,6 +64,19 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "Успешная регистрация. Пожалуйста подтвердите email"})
 }
 
+// Login выполняет аутентификацию пользователя.
+//
+// @Summary Вход пользователя
+// @Description Проверяет учетные данные пользователя и выдает JWT-токен
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param credentials body models.User true "Учетные данные пользователя"
+// @Success 200 {object} map[string]string "token: JWT токен, username: Имя пользователя"
+// @Failure 400 {string} string "Некорректный ввод"
+// @Failure 401 {string} string "Ошибка аутентификации"
+// @Failure 500 {string} string "Ошибка генерации токена"
+// @Router /login [post]
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	h.Logger.Info("Начало аутентификации пользователя")
 
@@ -84,10 +111,4 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	h.Logger.Info("Аутентификация успешна", zap.String("email", user.Email), zap.String("username", user.Username))
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(map[string]string{"token": token, "username": user.Username})
-}
-
-func (h *AuthHandler) Profile(w http.ResponseWriter, r *http.Request) {
-	h.Logger.Info("Запрос к защищенному маршруту (Profile)")
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "This is a protected route!"})
 }

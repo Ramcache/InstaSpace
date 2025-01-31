@@ -20,7 +20,18 @@ func NewLikeHandler(service *services.LikeService, logger *zap.Logger) *LikeHand
 	return &LikeHandler{Service: service, Logger: logger}
 }
 
-// AddLikeHandler обрабатывает запрос на добавление лайка
+// AddLikeHandler добавляет лайк
+//
+// @Summary Добавить лайк
+// @Description Добавляет лайк к фото от имени пользователя
+// @Tags Likes
+// @Produce json
+// @Param photoID query int true "ID фото"
+// @Param userID query int true "ID пользователя"
+// @Success 200 {object} map[string]string "message: Like added successfully"
+// @Failure 400 {string} string "Некорректные параметры"
+// @Failure 500 {string} string "Ошибка сервера"
+// @Router /api/likes [post]
 func (h *LikeHandler) AddLikeHandler(w http.ResponseWriter, r *http.Request) {
 	photoID, err := strconv.Atoi(r.URL.Query().Get("photoID"))
 	if err != nil || photoID <= 0 {
@@ -56,7 +67,18 @@ func (h *LikeHandler) AddLikeHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"message": "Like added successfully"})
 }
 
-// RemoveLikeHandler обрабатывает запрос на удаление лайка
+// RemoveLikeHandler удаляет лайк
+//
+// @Summary Удалить лайк
+// @Description Удаляет лайк с фото, поставленный пользователем
+// @Tags Likes
+// @Produce json
+// @Param photoID query int true "ID фото"
+// @Param userID query int true "ID пользователя"
+// @Success 200 {object} map[string]string "message: Like removed successfully"
+// @Failure 400 {string} string "Некорректные параметры"
+// @Failure 500 {string} string "Ошибка сервера"
+// @Router /api/likes [delete]
 func (h *LikeHandler) RemoveLikeHandler(w http.ResponseWriter, r *http.Request) {
 	photoID, err := strconv.Atoi(r.URL.Query().Get("photoID"))
 	if err != nil || photoID <= 0 {
@@ -88,7 +110,17 @@ func (h *LikeHandler) RemoveLikeHandler(w http.ResponseWriter, r *http.Request) 
 	json.NewEncoder(w).Encode(map[string]string{"message": "Like removed successfully"})
 }
 
-// GetLikesHandler обрабатывает запрос на получение списка пользователей, поставивших лайк
+// GetLikesHandler получает список пользователей, поставивших лайк
+//
+// @Summary Получить список лайков
+// @Description Возвращает список пользователей, поставивших лайк на фото
+// @Tags Likes
+// @Produce json
+// @Param photoID query int true "ID фото"
+// @Success 200 {object} map[string]interface{} "users: [список пользователей]"
+// @Failure 400 {string} string "Некорректные параметры"
+// @Failure 500 {string} string "Ошибка сервера"
+// @Router /api/likes/users [get]
 func (h *LikeHandler) GetLikesHandler(w http.ResponseWriter, r *http.Request) {
 	photoID, err := strconv.Atoi(r.URL.Query().Get("photoID"))
 	if err != nil {
@@ -109,7 +141,17 @@ func (h *LikeHandler) GetLikesHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]interface{}{"users": users})
 }
 
-// GetLikeCountHandler обрабатывает запрос на получение количества лайков
+// GetLikeCountHandler получает количество лайков у фото
+//
+// @Summary Получить количество лайков
+// @Description Возвращает количество лайков у фото
+// @Tags Likes
+// @Produce json
+// @Param photoID query int true "ID фото"
+// @Success 200 {object} map[string]interface{} "likes_count: Количество лайков"
+// @Failure 400 {string} string "Некорректные параметры"
+// @Failure 500 {string} string "Ошибка сервера"
+// @Router /api/likes/count [get]
 func (h *LikeHandler) GetLikeCountHandler(w http.ResponseWriter, r *http.Request) {
 	photoID, err := strconv.Atoi(r.URL.Query().Get("photoID"))
 	if err != nil {

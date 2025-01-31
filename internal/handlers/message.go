@@ -20,6 +20,18 @@ func NewMessageHandler(service *services.MessageService, logger *zap.Logger) *Me
 	return &MessageHandler{Service: service, Logger: logger}
 }
 
+// SendMessage отправляет сообщение в беседу
+//
+// @Summary Отправить сообщение
+// @Description Отправляет новое сообщение в указанную беседу
+// @Tags Messages
+// @Accept json
+// @Produce json
+// @Param message body models.Message true "Данные сообщения"
+// @Success 200 {object} map[string]int "message_id: ID созданного сообщения"
+// @Failure 400 {string} string "Некорректный запрос"
+// @Failure 500 {string} string "Ошибка сервера"
+// @Router /api/messages [post]
 func (h *MessageHandler) SendMessage(w http.ResponseWriter, r *http.Request) {
 	var req struct {
 		ConversationID int    `json:"conversation_id"`
@@ -56,6 +68,17 @@ func (h *MessageHandler) SendMessage(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]int{"message_id": messageID})
 }
 
+// GetMessages возвращает сообщения из беседы
+//
+// @Summary Получить сообщения
+// @Description Возвращает список сообщений по conversation_id
+// @Tags Messages
+// @Produce json
+// @Param conversationID path int true "ID беседы"
+// @Success 200 {array} models.Message
+// @Failure 400 {string} string "Некорректный conversation_id"
+// @Failure 500 {string} string "Ошибка сервера"
+// @Router /api/messages/{conversationID} [get]
 func (h *MessageHandler) GetMessages(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	conversationIDStr, ok := vars["conversationID"]
@@ -84,10 +107,22 @@ func (h *MessageHandler) GetMessages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	h.Logger.Info("Messages retrieved successfully", zap.Int("conversationID", conversationID), zap.Int("count", len(messages)))
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(messages)
 }
 
+// DeleteMessageHandler удаляет сообщение
+//
+// @Summary Удалить сообщение
+// @Description Удаляет сообщение по его ID
+// @Tags Messages
+// @Produce json
+// @Param messageID path int true "ID сообщения"
+// @Success 200 {object} map[string]string "message: Message deleted successfully"
+// @Failure 400 {string} string "Некорректный ID"
+// @Failure 500 {string} string "Ошибка сервера"
+// @Router /api/messages/{messageID} [delete]
 func (h *MessageHandler) DeleteMessageHandler(w http.ResponseWriter, r *http.Request) {
 	messageID, err := strconv.Atoi(mux.Vars(r)["messageID"])
 	if err != nil {
@@ -100,6 +135,7 @@ func (h *MessageHandler) DeleteMessageHandler(w http.ResponseWriter, r *http.Req
 	if err != nil {
 		if err.Error() == "message not found" {
 			http.Error(w, "Message not found", http.StatusBadRequest)
+			h.Logger.Warn("Message not found", zap.Int("messageID", messageID))
 			return
 		}
 		h.Logger.Error("Failed to delete message", zap.Error(err))

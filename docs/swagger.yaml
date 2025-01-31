@@ -1,0 +1,575 @@
+definitions:
+  models.Comment:
+    properties:
+      content:
+        description: Текст комментария
+        example: Отличное фото!
+        type: string
+      created_at:
+        description: Дата создания комментария
+        example: "2024-01-31T12:45:00Z"
+        type: string
+      id:
+        description: ID комментария
+        example: 1
+        type: integer
+      photo_id:
+        description: ID фото, к которому относится комментарий
+        example: 101
+        type: integer
+      updated_at:
+        description: Дата последнего обновления комментария
+        example: "2024-01-31T12:50:00Z"
+        type: string
+      user_id:
+        description: ID пользователя, оставившего комментарий
+        example: 42
+        type: integer
+      username:
+        description: Имя пользователя, оставившего комментарий
+        example: johndoe
+        type: string
+    type: object
+  models.Message:
+    properties:
+      content:
+        description: Содержимое сообщения
+        example: Привет! Как дела?
+        type: string
+      conversation_id:
+        description: ID беседы, к которой относится сообщение
+        example: 101
+        type: integer
+      created_at:
+        description: Дата и время отправки сообщения
+        example: "2024-02-01T15:45:00Z"
+        type: string
+      id:
+        description: ID сообщения
+        example: 1
+        type: integer
+      sender_id:
+        description: ID отправителя сообщения
+        example: 42
+        type: integer
+    type: object
+  models.Photo:
+    properties:
+      created_at:
+        description: Дата загрузки фото (в формате ISO 8601)
+        example: "2024-02-01T16:00:00Z"
+        type: string
+      description:
+        description: Описание фотографии
+        example: Закат на пляже
+        type: string
+      id:
+        description: ID фотографии
+        example: 1
+        type: integer
+      url:
+        description: URL изображения
+        example: https://example.com/uploads/photo1.jpg
+        type: string
+      user_id:
+        description: ID пользователя, загрузившего фото
+        example: 42
+        type: integer
+    type: object
+  models.User:
+    properties:
+      email:
+        description: Email пользователя
+        example: johndoe@example.com
+        type: string
+      id:
+        description: ID пользователя
+        example: 1
+        type: integer
+      password:
+        description: Пароль пользователя (не возвращается в ответах)
+        example: securepassword
+        type: string
+      username:
+        description: Имя пользователя
+        example: johndoe
+        type: string
+      verified:
+        description: Флаг подтверждения email
+        example: true
+        type: boolean
+    type: object
+info:
+  contact: {}
+paths:
+  /api/comments:
+    post:
+      consumes:
+      - application/json
+      description: Создает новый комментарий к фото
+      parameters:
+      - description: Данные комментария
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/models.Comment'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'message: comment created successfully, id: 1'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Некорректный ввод
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Создать комментарий
+      tags:
+      - Comments
+  /api/comments/{id}/delete:
+    delete:
+      description: Удаляет комментарий по ID
+      parameters:
+      - description: ID комментария
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: ID пользователя
+        in: query
+        name: user_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: comment deleted successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Некорректный ID
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Удалить комментарий
+      tags:
+      - Comments
+  /api/comments/{id}/edit:
+    put:
+      consumes:
+      - application/json
+      description: Обновляет текст комментария
+      parameters:
+      - description: ID комментария
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Обновленные данные комментария
+        in: body
+        name: comment
+        required: true
+        schema:
+          $ref: '#/definitions/models.Comment'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: comment updated successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Некорректные данные
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Обновить комментарий
+      tags:
+      - Comments
+  /api/comments/{photoID}:
+    get:
+      description: Возвращает список комментариев по photo_id
+      parameters:
+      - description: ID фото
+        in: path
+        name: photoID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Comment'
+            type: array
+        "400":
+          description: Неверный photo_id
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Получить комментарии
+      tags:
+      - Comments
+  /api/likes:
+    delete:
+      description: Удаляет лайк с фото, поставленный пользователем
+      parameters:
+      - description: ID фото
+        in: query
+        name: photoID
+        required: true
+        type: integer
+      - description: ID пользователя
+        in: query
+        name: userID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: Like removed successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Некорректные параметры
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Удалить лайк
+      tags:
+      - Likes
+    post:
+      description: Добавляет лайк к фото от имени пользователя
+      parameters:
+      - description: ID фото
+        in: query
+        name: photoID
+        required: true
+        type: integer
+      - description: ID пользователя
+        in: query
+        name: userID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: Like added successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Некорректные параметры
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Добавить лайк
+      tags:
+      - Likes
+  /api/likes/count:
+    get:
+      description: Возвращает количество лайков у фото
+      parameters:
+      - description: ID фото
+        in: query
+        name: photoID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'likes_count: Количество лайков'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Некорректные параметры
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Получить количество лайков
+      tags:
+      - Likes
+  /api/likes/users:
+    get:
+      description: Возвращает список пользователей, поставивших лайк на фото
+      parameters:
+      - description: ID фото
+        in: query
+        name: photoID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'users: [список пользователей]'
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Некорректные параметры
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Получить список лайков
+      tags:
+      - Likes
+  /api/messages:
+    post:
+      consumes:
+      - application/json
+      description: Отправляет новое сообщение в указанную беседу
+      parameters:
+      - description: Данные сообщения
+        in: body
+        name: message
+        required: true
+        schema:
+          $ref: '#/definitions/models.Message'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message_id: ID созданного сообщения'
+          schema:
+            additionalProperties:
+              type: integer
+            type: object
+        "400":
+          description: Некорректный запрос
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Отправить сообщение
+      tags:
+      - Messages
+  /api/messages/{conversationID}:
+    get:
+      description: Возвращает список сообщений по conversation_id
+      parameters:
+      - description: ID беседы
+        in: path
+        name: conversationID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Message'
+            type: array
+        "400":
+          description: Некорректный conversation_id
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Получить сообщения
+      tags:
+      - Messages
+  /api/messages/{messageID}:
+    delete:
+      description: Удаляет сообщение по его ID
+      parameters:
+      - description: ID сообщения
+        in: path
+        name: messageID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: Message deleted successfully'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Некорректный ID
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Удалить сообщение
+      tags:
+      - Messages
+  /api/photos:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Загружает фото в систему и сохраняет в базе данных
+      parameters:
+      - description: ID пользователя
+        in: header
+        name: user_id
+        required: true
+        type: integer
+      - description: Файл изображения
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: Описание изображения
+        in: formData
+        name: description
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Photo'
+        "400":
+          description: Некорректный ввод
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Загрузить фото
+      tags:
+      - Photos
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Проверяет учетные данные пользователя и выдает JWT-токен
+      parameters:
+      - description: Учетные данные пользователя
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'token: JWT токен, username: Имя пользователя'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Некорректный ввод
+          schema:
+            type: string
+        "401":
+          description: Ошибка аутентификации
+          schema:
+            type: string
+        "500":
+          description: Ошибка генерации токена
+          schema:
+            type: string
+      summary: Вход пользователя
+      tags:
+      - Auth
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Создает нового пользователя и отправляет подтверждение по email
+      parameters:
+      - description: Данные пользователя
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'message: Успешная регистрация. Пожалуйста подтвердите email'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Некорректный ввод
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Регистрация пользователя
+      tags:
+      - Auth
+  /ws:
+    get:
+      consumes:
+      - application/json
+      description: Устанавливает WebSocket соединение и отправляет/получает сообщения
+        в режиме реального времени
+      produces:
+      - application/json
+      responses:
+        "101":
+          description: WebSocket connection established
+          schema:
+            type: string
+        "500":
+          description: Ошибка сервера
+          schema:
+            type: string
+      summary: Установить WebSocket соединение
+      tags:
+      - WebSocket
+swagger: "2.0"

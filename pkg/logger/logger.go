@@ -10,11 +10,11 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-func NewLogger() (*zap.Logger, error) {
+func NewLogger() (*zap.Logger, *zap.SugaredLogger, error) {
 	logFilePath := fmt.Sprintf("logs/%s.log", time.Now().Format("2006-01-02"))
 
 	if err := os.MkdirAll("logs", os.ModePerm); err != nil {
-		return nil, fmt.Errorf("не удалось создать директорию для логов: %w", err)
+		return nil, nil, fmt.Errorf("не удалось создать директорию для логов: %w", err)
 	}
 
 	logRotation := &lumberjack.Logger{
@@ -25,7 +25,12 @@ func NewLogger() (*zap.Logger, error) {
 		Compress:   true,
 	}
 
-	writeSyncer := zapcore.AddSync(logRotation)
+	logLevel := zapcore.InfoLevel
+	if lvl := os.Getenv("LOG_LEVEL"); lvl != "" {
+		if parsedLevel, err := zapcore.ParseLevel(lvl); err == nil {
+			logLevel = parsedLevel
+		}
+	}
 
 	encoderConfig := zapcore.EncoderConfig{
 		TimeKey:      "time",
@@ -36,11 +41,14 @@ func NewLogger() (*zap.Logger, error) {
 		EncodeLevel:  zapcore.CapitalLevelEncoder,
 		EncodeCaller: zapcore.ShortCallerEncoder,
 	}
-	
+
 	core := zapcore.NewTee(
-		zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), writeSyncer, zapcore.InfoLevel),
-		zapcore.NewCore(zapcore.NewConsoleEncoder(encoderConfig), zapcore.AddSync(os.Stdout), zapcore.InfoLevel),
+		zapcore.NewCore(zapcore.NewJSONEncoder(encoderConfig), zapcore.AddSync(logRotation), logLevel),
+		zapcore.NewCore(zapcore.NewConsoleEncoder(encoderConfig), zapcore.AddSync(os.Stdout), logLevel),
 	)
 
-	return zap.New(core, zap.AddCaller()), nil
+	logger := zap.New(core, zap.AddCaller())
+	sugar := logger.Sugar()
+
+	return logger, sugar, nil
 }

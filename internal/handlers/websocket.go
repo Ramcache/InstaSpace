@@ -30,7 +30,16 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-// Обработчик WebSocket-соединений
+// HandleWS обрабатывает WebSocket соединение
+//
+// @Summary Установить WebSocket соединение
+// @Description Устанавливает WebSocket соединение и отправляет/получает сообщения в режиме реального времени
+// @Tags WebSocket
+// @Accept json
+// @Produce json
+// @Success 101 {string} string "WebSocket connection established"
+// @Failure 500 {string} string "Ошибка сервера"
+// @Router /ws [get]
 func (h *WebSocketHandler) HandleWS(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -43,6 +52,7 @@ func (h *WebSocketHandler) HandleWS(w http.ResponseWriter, r *http.Request) {
 	h.Mutex.Lock()
 	h.Clients[conn] = true
 	h.Mutex.Unlock()
+
 	defer func() {
 		h.Mutex.Lock()
 		delete(h.Clients, conn)
@@ -69,18 +79,16 @@ func (h *WebSocketHandler) HandleWS(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		// Проверяем корректность входных данных
 		if msg.ConversationID == 0 || msg.SenderID == 0 || msg.Content == "" {
 			h.Logger.Warn("Received invalid message data", zap.Any("message", msg))
-			conn.WriteJSON(map[string]string{"error": "Invalid message data"})
+			_ = conn.WriteJSON(map[string]string{"error": "Invalid message data"})
 			continue
 		}
 
-		// Сохраняем сообщение в БД
 		messageID, err := h.MessageService.SendMessage(r.Context(), msg.ConversationID, msg.SenderID, msg.Content)
 		if err != nil {
 			h.Logger.Error("Failed to save message", zap.Error(err))
-			conn.WriteJSON(map[string]string{"error": "Failed to save message"})
+			_ = conn.WriteJSON(map[string]string{"error": "Failed to save message"})
 			continue
 		}
 
@@ -91,7 +99,6 @@ func (h *WebSocketHandler) HandleWS(w http.ResponseWriter, r *http.Request) {
 			zap.Int("message_id", messageID),
 		)
 
-		// Подготавливаем сообщение для отправки
 		response := map[string]interface{}{
 			"message_id":      messageID,
 			"conversation_id": msg.ConversationID,
@@ -99,7 +106,6 @@ func (h *WebSocketHandler) HandleWS(w http.ResponseWriter, r *http.Request) {
 			"content":         msg.Content,
 		}
 
-		// Рассылаем сообщение всем клиентам
 		h.Mutex.Lock()
 		for client := range h.Clients {
 			err = client.WriteJSON(response)

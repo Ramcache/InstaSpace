@@ -19,6 +19,18 @@ func NewCommentHandler(service services.CommentServiceInterface, logger *zap.Log
 	return &CommentHandler{Service: service, Logger: logger}
 }
 
+// CreateComment создает новый комментарий
+//
+// @Summary Создать комментарий
+// @Description Создает новый комментарий к фото
+// @Tags Comments
+// @Accept json
+// @Produce json
+// @Param comment body models.Comment true "Данные комментария"
+// @Success 201 {object} map[string]interface{} "message: comment created successfully, id: 1"
+// @Failure 400 {string} string "Некорректный ввод"
+// @Failure 500 {string} string "Ошибка сервера"
+// @Router /api/comments [post]
 func (h *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
 	h.Logger.Info("Получен запрос на создание комментария")
 
@@ -49,14 +61,23 @@ func (h *CommentHandler) CreateComment(w http.ResponseWriter, r *http.Request) {
 
 	h.Logger.Info("Комментарий успешно создан", zap.Int("id", id))
 	w.WriteHeader(http.StatusCreated)
-	if err := json.NewEncoder(w).Encode(map[string]interface{}{
+	_ = json.NewEncoder(w).Encode(map[string]interface{}{
 		"message": "comment created successfully",
 		"id":      id,
-	}); err != nil {
-		h.Logger.Error("Ошибка кодирования ответа", zap.Error(err))
-	}
+	})
 }
 
+// GetCommentsByPhotoID возвращает список комментариев к фото
+//
+// @Summary Получить комментарии
+// @Description Возвращает список комментариев по photo_id
+// @Tags Comments
+// @Produce json
+// @Param photoID path int true "ID фото"
+// @Success 200 {array} models.Comment
+// @Failure 400 {string} string "Неверный photo_id"
+// @Failure 500 {string} string "Ошибка сервера"
+// @Router /api/comments/{photoID} [get]
 func (h *CommentHandler) GetCommentsByPhotoID(w http.ResponseWriter, r *http.Request) {
 	h.Logger.Info("Получен запрос на получение комментариев по photo_id")
 
@@ -64,36 +85,42 @@ func (h *CommentHandler) GetCommentsByPhotoID(w http.ResponseWriter, r *http.Req
 	photoID := vars["photoID"]
 	if photoID == "" {
 		h.Logger.Warn("Отсутствует параметр photoID")
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		_ = json.NewEncoder(w).Encode(map[string]string{"error": "missing photo_id"})
+		http.Error(w, "missing photo_id", http.StatusBadRequest)
 		return
 	}
 
 	id, err := strconv.Atoi(photoID)
 	if err != nil {
 		h.Logger.Error("Неверный формат photoID", zap.String("photoID", photoID), zap.Error(err))
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		_ = json.NewEncoder(w).Encode(map[string]string{"error": "invalid photo_id"})
+		http.Error(w, "invalid photo_id", http.StatusBadRequest)
 		return
 	}
 
 	comments, err := h.Service.GetCommentsByPhotoID(r.Context(), id)
 	if err != nil {
 		h.Logger.Error("Ошибка получения комментариев", zap.Int("photoID", id), zap.Error(err))
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		_ = json.NewEncoder(w).Encode(map[string]string{"error": "failed to get comments"})
+		http.Error(w, "failed to get comments", http.StatusInternalServerError)
 		return
 	}
 
 	h.Logger.Info("Комментарии успешно получены", zap.Int("photoID", id), zap.Int("count", len(comments)))
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(comments)
 }
 
+// UpdateComment обновляет комментарий
+//
+// @Summary Обновить комментарий
+// @Description Обновляет текст комментария
+// @Tags Comments
+// @Accept json
+// @Produce json
+// @Param id path int true "ID комментария"
+// @Param comment body models.Comment true "Обновленные данные комментария"
+// @Success 200 {object} map[string]string "message: comment updated successfully"
+// @Failure 400 {string} string "Некорректные данные"
+// @Failure 500 {string} string "Ошибка сервера"
+// @Router /api/comments/{id}/edit [put]
 func (h *CommentHandler) UpdateComment(w http.ResponseWriter, r *http.Request) {
 	h.Logger.Info("Получен запрос на обновление комментария")
 
@@ -116,25 +143,28 @@ func (h *CommentHandler) UpdateComment(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Service.UpdateComment(r.Context(), &comment)
 	if err != nil {
-		if err.Error() == "invalid comment data" {
-			h.Logger.Error("Некорректные данные комментария", zap.Error(err))
-			http.Error(w, "invalid comment data", http.StatusBadRequest)
-			return
-		}
 		h.Logger.Error("Ошибка обновления комментария", zap.Int("id", comment.ID), zap.Error(err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	h.Logger.Info("Комментарий успешно обновлён", zap.Int("id", comment.ID))
-	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	err = json.NewEncoder(w).Encode(map[string]string{"message": "comment updated successfully"})
-	if err != nil {
-		h.Logger.Error("Ошибка при кодировании JSON ответа", zap.Error(err))
-	}
+	_ = json.NewEncoder(w).Encode(map[string]string{"message": "comment updated successfully"})
 }
 
+// DeleteComment удаляет комментарий
+//
+// @Summary Удалить комментарий
+// @Description Удаляет комментарий по ID
+// @Tags Comments
+// @Produce json
+// @Param id path int true "ID комментария"
+// @Param user_id query int true "ID пользователя"
+// @Success 200 {object} map[string]string "message: comment deleted successfully"
+// @Failure 400 {string} string "Некорректный ID"
+// @Failure 500 {string} string "Ошибка сервера"
+// @Router /api/comments/{id}/delete [delete]
 func (h *CommentHandler) DeleteComment(w http.ResponseWriter, r *http.Request) {
 	h.Logger.Info("Получен запрос на удаление комментария")
 
@@ -162,18 +192,12 @@ func (h *CommentHandler) DeleteComment(w http.ResponseWriter, r *http.Request) {
 
 	err = h.Service.DeleteComment(r.Context(), commentID, userID)
 	if err != nil {
-		if err.Error() == "no rows deleted" {
-			h.Logger.Warn("Комментарий не найден", zap.Int("comment_id", commentID), zap.Int("user_id", userID))
-			http.Error(w, "no rows deleted", http.StatusInternalServerError)
-			return
-		}
-		h.Logger.Error("Ошибка удаления комментария", zap.Int("comment_id", commentID), zap.Int("user_id", userID), zap.Error(err))
+		h.Logger.Error("Ошибка удаления комментария", zap.Int("comment_id", commentID), zap.Error(err))
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	h.Logger.Info("Комментарий успешно удалён", zap.Int("comment_id", commentID), zap.Int("user_id", userID))
-	w.Header().Set("Content-Type", "application/json")
+	h.Logger.Info("Комментарий успешно удалён", zap.Int("comment_id", commentID))
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(map[string]string{"message": "comment deleted successfully"})
 }

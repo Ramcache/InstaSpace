@@ -23,6 +23,20 @@ func NewPhotoHandler(service services.PhotoServiceInterface, logger *zap.Logger)
 	return &PhotoHandler{Service: service, Logger: logger}
 }
 
+// UploadPhoto загружает фото
+//
+// @Summary Загрузить фото
+// @Description Загружает фото в систему и сохраняет в базе данных
+// @Tags Photos
+// @Accept multipart/form-data
+// @Produce json
+// @Param user_id header int true "ID пользователя"
+// @Param file formData file true "Файл изображения"
+// @Param description formData string false "Описание изображения"
+// @Success 201 {object} models.Photo
+// @Failure 400 {string} string "Некорректный ввод"
+// @Failure 500 {string} string "Ошибка сервера"
+// @Router /api/photos [post]
 func (h *PhotoHandler) UploadPhoto(w http.ResponseWriter, r *http.Request) {
 	h.Logger.Info("Начало загрузки фото")
 
@@ -104,6 +118,7 @@ func (h *PhotoHandler) UploadPhoto(w http.ResponseWriter, r *http.Request) {
 		URL:         filePath,
 		Description: description,
 	}
+
 	if err := h.Service.SavePhoto(&photo); err != nil {
 		if errors.Is(err, services.ErrInvalidPhotoData) {
 			h.Logger.Warn("Некорректные данные фото", zap.Error(err))
