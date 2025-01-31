@@ -5,13 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4f691e55-0d76-4466-a530-7e83d5dbf2ab" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/internal/test/websocket_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/server/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/server/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/handlers/message_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handlers/message_handler.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/repositories/message_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/repositories/message_repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/services/message_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/message_service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/test/main_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/test/main_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/test/websocket_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/test/websocket_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/handlers/ws_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handlers/ws_handler.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,6 +81,7 @@
     "Go Test.go test test.executor": "Run",
     "Go Test.main_test.go.executor": "Run",
     "Go Test.photo_handler_test.go.executor": "Run",
+    "Go Test.websocket_test.go.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.go.formatter.settings.were.checked": "true",
@@ -118,15 +115,7 @@
       <recent name="R:\ProjectsGo\InstaSpace\cmd\app" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestDeleteMessage in InstaSpace/internal/test">
-    <configuration name="go build InstaSpace/internal/test" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="InstaSpace" />
-      <working_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="InstaSpace/internal/test" />
-      <directory value="$PROJECT_DIR$" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Go Test.go test test">
     <configuration name="TestDeleteMessage in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="InstaSpace" />
       <working_directory value="$PROJECT_DIR$/internal/test" />
@@ -174,6 +163,16 @@
       <framework value="gotest" />
       <method v="2" />
     </configuration>
+    <configuration name="websocket_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="InstaSpace" />
+      <working_directory value="$PROJECT_DIR$/internal/test" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/internal/test/websocket_test.go" />
+      <framework value="gotest" />
+      <method v="2" />
+    </configuration>
     <configuration default="true" type="docker-deploy" factoryName="docker-compose.yml" temporary="true">
       <deployment type="docker-compose.yml">
         <settings />
@@ -182,11 +181,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Go Test.go test test" />
+        <item itemvalue="Go Test.websocket_test.go" />
         <item itemvalue="Go Test.TestDeleteMessage in InstaSpace/internal/test" />
         <item itemvalue="Go Test.TestGetMessages/Ошибка:_Переписка_не_найдена in InstaSpace/internal/test" />
         <item itemvalue="Go Test.TestGetMessages in InstaSpace/internal/test" />
-        <item itemvalue="Go Test.go test test" />
-        <item itemvalue="Go Build.go build InstaSpace/internal/test" />
       </list>
     </recent_temporary>
   </component>
@@ -214,6 +213,11 @@
           <url>file://$PROJECT_DIR$/internal/auth/handler.go</url>
           <line>98</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DlvLineBreakpoint">
+          <url>file://$PROJECT_DIR$/internal/test/websocket_test.go</url>
+          <line>47</line>
+          <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

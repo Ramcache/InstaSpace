@@ -52,6 +52,8 @@ func main() {
 	messageService := services.NewMessageService(messageRepo)
 	messageHandler := handlers.NewMessageHandler(messageService, zapLogger)
 
+	wsHandler := handlers.NewWebSocketHandler(zapLogger, messageService)
+
 	r := mux.NewRouter()
 	r.HandleFunc("/register", authHandler.Register).Methods("POST")
 	r.HandleFunc("/login", authHandler.Login).Methods("POST")
@@ -74,6 +76,8 @@ func main() {
 	secure.HandleFunc("/api/messages", messageHandler.SendMessage).Methods("POST")
 	secure.HandleFunc("/api/messages/{conversationID}", messageHandler.GetMessages).Methods("GET")
 	secure.HandleFunc("/api/messages/{messageID}", messageHandler.DeleteMessageHandler).Methods(http.MethodDelete)
+
+	r.HandleFunc("/ws", wsHandler.HandleWS).Methods("GET")
 
 	port := cfg.ServerPort
 	zapLogger.Info("Сервер запущен", zap.String("порт", port))

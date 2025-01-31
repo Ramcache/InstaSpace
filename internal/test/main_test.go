@@ -72,6 +72,9 @@ func TestMain(m *testing.M) {
 	messageService := services.NewMessageService(messageRepo)
 	messageHandler := handlers.NewMessageHandler(messageService, zapLogger)
 
+	wsHandler = handlers.NewWebSocketHandler(zapLogger, messageService)
+	r.HandleFunc("/ws", wsHandler.HandleWS).Methods("GET")
+
 	r.HandleFunc("/api/messages", messageHandler.SendMessage).Methods("POST")
 	r.HandleFunc("/api/messages/{conversationID}", messageHandler.GetMessages).Methods("GET")
 	r.HandleFunc("/api/messages/{messageID}", messageHandler.DeleteMessageHandler).Methods(http.MethodDelete)
