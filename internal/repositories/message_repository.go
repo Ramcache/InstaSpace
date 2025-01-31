@@ -8,11 +8,19 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+type MessageRepositoryInterface interface {
+	CreateConversation(ctx context.Context, user1ID, user2ID int) (int, error)
+	SendMessage(ctx context.Context, conversationID, senderID int, content string) (int, error)
+	GetMessages(ctx context.Context, conversationID int) ([]models.Message, error)
+	DeleteMessage(ctx context.Context, messageID int) error
+	ConversationExists(ctx context.Context, conversationID int, exists *bool) error
+}
+
 type MessageRepository struct {
 	DB *pgxpool.Pool
 }
 
-func NewMessageRepository(db *pgxpool.Pool) *MessageRepository {
+func NewMessageRepository(db *pgxpool.Pool) MessageRepositoryInterface {
 	return &MessageRepository{DB: db}
 }
 
@@ -45,7 +53,7 @@ func (r *MessageRepository) SendMessage(ctx context.Context, conversationID, sen
 
 func (r *MessageRepository) GetMessages(ctx context.Context, conversationID int) ([]models.Message, error) {
 	var exists bool
-	err := r.DB.QueryRow(ctx, "SELECT EXISTS (SELECT 1 FROM conversations WHERE id=$1)", conversationID).Scan(&exists)
+	err := r.ConversationExists(ctx, conversationID, &exists)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +90,10 @@ func (r *MessageRepository) DeleteMessage(ctx context.Context, messageID int) er
 		return errors.New("message not found")
 	}
 
-	// Удаляем сообщение
 	_, err = r.DB.Exec(ctx, "DELETE FROM messages WHERE id = $1", messageID)
 	return err
+}
+
+func (r *MessageRepository) ConversationExists(ctx context.Context, conversationID int, exists *bool) error {
+	return r.DB.QueryRow(ctx, "SELECT EXISTS (SELECT 1 FROM conversations WHERE id=$1)", conversationID).Scan(exists)
 }

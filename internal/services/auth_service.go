@@ -10,6 +10,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+type AuthServiceInterface interface {
+	RegisterUser(user *models.User) error
+	Authenticate(email, password string) (*models.User, error)
+	GenerateToken(user *models.User) (string, error)
+}
+
 type AuthService struct {
 	Repository repositories.AuthRepositoryInterface
 	JWTSecret  string
@@ -20,12 +26,6 @@ func NewAuthService(repo repositories.AuthRepositoryInterface, jwtSecret string)
 		Repository: repo,
 		JWTSecret:  jwtSecret,
 	}
-}
-
-type AuthServiceInterface interface {
-	RegisterUser(user *models.User) error
-	Authenticate(email, password string) (*models.User, error)
-	GenerateToken(user *models.User) (string, error)
 }
 
 func (s *AuthService) RegisterUser(user *models.User) error {

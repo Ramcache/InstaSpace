@@ -75,7 +75,7 @@ func main() {
 
 	secure.HandleFunc("/api/messages", messageHandler.SendMessage).Methods("POST")
 	secure.HandleFunc("/api/messages/{conversationID}", messageHandler.GetMessages).Methods("GET")
-	secure.HandleFunc("/api/messages/{messageID}", messageHandler.DeleteMessageHandler).Methods(http.MethodDelete)
+	secure.HandleFunc("/api/messages/{messageID}", messageHandler.DeleteMessageHandler).Methods("DELETE")
 
 	r.HandleFunc("/ws", wsHandler.HandleWS).Methods("GET")
 
