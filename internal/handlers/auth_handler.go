@@ -32,6 +32,12 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if user.Username == "" {
+		h.Logger.Warn("Username отсутствует при регистрации")
+		http.Error(w, "Имя пользователя обязательно", http.StatusBadRequest)
+		return
+	}
+
 	h.Logger.Info("Попытка регистрации пользователя", zap.String("email", user.Email))
 	if err := h.Service.RegisterUser(&user); err != nil {
 		h.Logger.Error("Ошибка при регистрации пользователя", zap.String("email", user.Email), zap.Error(err))
@@ -39,7 +45,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.Logger.Info("Регистрация успешна", zap.String("email", user.Email))
+	h.Logger.Info("Регистрация успешна", zap.String("email", user.Email), zap.String("username", user.Username))
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(map[string]string{"message": "Успешная регистрация. Пожалуйста подтвердите email"})
 }
@@ -75,9 +81,9 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	h.Logger.Info("Аутентификация успешна", zap.String("email", user.Email))
+	h.Logger.Info("Аутентификация успешна", zap.String("email", user.Email), zap.String("username", user.Username))
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"token": token})
+	json.NewEncoder(w).Encode(map[string]string{"token": token, "username": user.Username})
 }
 
 func (h *AuthHandler) Profile(w http.ResponseWriter, r *http.Request) {

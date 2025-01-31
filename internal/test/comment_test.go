@@ -26,7 +26,7 @@ func setupTestData(t *testing.T, db *pgxpool.Pool) {
 	_, err := db.Exec(ctx, "TRUNCATE TABLE comments, photos, users RESTART IDENTITY CASCADE")
 	require.NoError(t, err, "Не удалось очистить таблицы")
 
-	_, err = db.Exec(ctx, "INSERT INTO users (id, email, password) VALUES (1, 'test@example.com', 'test_password')")
+	_, err = db.Exec(ctx, "INSERT INTO users (id, email, password, username) VALUES (1, 'test@example.com', 'test_password', 'testuser')")
 	require.NoError(t, err, "Не удалось добавить запись в таблицу users")
 
 	_, err = db.Exec(ctx, "INSERT INTO photos (id, user_id, url) VALUES (1, 1, 'http://example.com/test-photo.jpg')")
@@ -155,11 +155,18 @@ func TestGetCommentsByPhotoID(t *testing.T) {
 			assert.Equal(t, tc.ExpectedCode, resp.StatusCode, "Некорректный HTTP код ответа")
 
 			if !tc.ShouldError {
-				var comments []models.Comment
+				var comments []struct {
+					Content  string `json:"content"`
+					Username string `json:"username"`
+				}
 				err := json.NewDecoder(resp.Body).Decode(&comments)
 				require.NoError(t, err, "Ошибка декодирования ответа")
 
 				assert.Equal(t, tc.ExpectedLen, len(comments), "Некорректное количество комментариев")
+
+				if len(comments) > 0 {
+					assert.Equal(t, "testuser", comments[0].Username, "Некорректное имя пользователя")
+				}
 			}
 		})
 	}

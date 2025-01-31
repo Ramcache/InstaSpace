@@ -5,10 +5,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4f691e55-0d76-4466-a530-7e83d5dbf2ab" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/internal/handlers/message_handler.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/handlers/photo_likes_handler.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/handlers/ws_handler.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/models/conversation.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/models/message.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/models/photo_likes.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/repositories/message_repository.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/repositories/photo_likes_repository.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/services/message_service.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/services/photo_likes_service.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/test/photo_likes_test.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/test/websocket_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/server/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/server/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/handlers/auth_handler.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/handlers/auth_handler.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/models/comment.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/comment.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/models/user.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/models/user.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/repositories/auth_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/repositories/auth_repository.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/services/auth_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/services/auth_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/repositories/comment_repository.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/repositories/comment_repository.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/test/auth_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/test/auth_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/test/comment_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/test/comment_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/test/main_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/test/main_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/20241225082319_create_users_table.sql" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/20241225082319_create_users_table.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/migrations/20241225090552_create_photos_table.sql" beforeDir="false" afterPath="$PROJECT_DIR$/migrations/20241225090552_create_photos_table.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,76 +62,89 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultGoTemplateProperty&quot;: &quot;Go File&quot;,
-    &quot;Docker.docker-compose.yml: Compose Deployment.executor&quot;: &quot;Run&quot;,
-    &quot;Go Build.go build InstaSpace/cmd.executor&quot;: &quot;Run&quot;,
-    &quot;Go Build.go build InstaSpace/cmd/server.executor&quot;: &quot;Run&quot;,
-    &quot;Go Build.go build main.go.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestAuthHandler_Register in InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestLoginUser in InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestLoginUser/Успешный_вход in InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestRegisterUser in InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestRegisterUser/Успешная_регистрация in InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestUploadPhoto in InstaSpace/internal/handlers.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestUploadPhoto in InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestUploadPhoto/Error_Creating_Directory in InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.TestUploadPhotoHandler in InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.auth_test.go.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.go test InstaSpace/internal/auth.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.go test InstaSpace/internal/photo.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.go test InstaSpace/internal/test.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.go test test.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.main_test.go.executor&quot;: &quot;Run&quot;,
-    &quot;Go Test.photo_handler_test.go.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.formatter.settings.were.checked&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.migrated.go.modules.settings&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.automatic.dependencies.download&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.go.modules.go.list.on.any.changes.was.set&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;go.import.settings.migrated&quot;: &quot;true&quot;,
-    &quot;go.sdk.automatically.set&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;R:/ProjectsGo/InstaSpace&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "Docker.docker-compose.yml: Compose Deployment.executor": "Run",
+    "Go Build.go build InstaSpace/cmd.executor": "Run",
+    "Go Build.go build InstaSpace/cmd/server.executor": "Run",
+    "Go Build.go build InstaSpace/internal/test.executor": "Run",
+    "Go Build.go build main.go.executor": "Run",
+    "Go Test.TestAuthHandler_Register in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestCreateCommentHandler in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestCreateCommentHandler/Успешное_создание_комментария in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestDeleteComment in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestDeleteCommentHandler in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestGetCommentsByPhotoID in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestGetCommentsByPhotoIDHandler in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestGetMessages in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestLikeHandlers in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestLikeHandlers/Ошибка:_Удаление_отсутствующего_лайка in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestLikeHandlers/Успешное_добавление_лайка in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestLoginUser in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestLoginUser/Успешный_вход in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestRegisterUser in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestRegisterUser/Успешная_регистрация in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestSavePhoto in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestSendMessage in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestUpdateComment in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestUpdateComment/Успешное_обновление_комментария in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestUpdateCommentHandler in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestUploadPhoto in InstaSpace/internal/handlers.executor": "Run",
+    "Go Test.TestUploadPhoto in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestUploadPhoto/Error_Creating_Directory in InstaSpace/internal/test.executor": "Run",
+    "Go Test.TestUploadPhotoHandler in InstaSpace/internal/test.executor": "Run",
+    "Go Test.auth_test.go.executor": "Run",
+    "Go Test.comment_test.go.executor": "Run",
+    "Go Test.go test InstaSpace/internal/auth.executor": "Run",
+    "Go Test.go test InstaSpace/internal/photo.executor": "Run",
+    "Go Test.go test InstaSpace/internal/test.executor": "Run",
+    "Go Test.go test test.executor": "Run",
+    "Go Test.main_test.go.executor": "Run",
+    "Go Test.photo_handler_test.go.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "git-widget-placeholder": "main",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "R:/ProjectsGo/InstaSpace",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;postgresql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "postgresql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="R:\ProjectsGo\InstaSpace\internal\photo" />
       <recent name="R:\ProjectsGo\InstaSpace\cmd" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="R:\ProjectsGo\InstaSpace\internal\test" />
       <recent name="R:\ProjectsGo\InstaSpace\migrations" />
+      <recent name="R:\ProjectsGo\InstaSpace\internal\test" />
       <recent name="R:\ProjectsGo\InstaSpace\internal\photo" />
       <recent name="R:\ProjectsGo\InstaSpace\cmd" />
       <recent name="R:\ProjectsGo\InstaSpace\cmd\app" />
     </key>
   </component>
-  <component name="RunManager" selected="Go Test.TestUploadPhotoHandler in InstaSpace/internal/test">
-    <configuration name="TestLoginUser in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Go Test.TestGetMessages in InstaSpace/internal/test">
+    <configuration name="go build InstaSpace/internal/test" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="InstaSpace" />
-      <working_directory value="$PROJECT_DIR$/internal/test" />
-      <root_directory value="$PROJECT_DIR$" />
+      <working_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
       <package value="InstaSpace/internal/test" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestLoginUser\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestLoginUser/Успешный_вход in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestGetMessages in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="InstaSpace" />
       <working_directory value="$PROJECT_DIR$/internal/test" />
       <root_directory value="$PROJECT_DIR$" />
@@ -118,22 +153,22 @@
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestLoginUser\E$/^\QУспешный_вход\E$" />
+      <pattern value="^\QTestGetMessages\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestRegisterUser in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestSavePhoto in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="InstaSpace" />
       <working_directory value="$PROJECT_DIR$/internal/test" />
       <root_directory value="$PROJECT_DIR$" />
       <kind value="PACKAGE" />
       <package value="InstaSpace/internal/test" />
-      <directory value="$PROJECT_DIR$" />
+      <directory value="$PROJECT_DIR$/internal/test" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestRegisterUser\E$" />
+      <pattern value="^\QTestSavePhoto\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestUploadPhotoHandler in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+    <configuration name="TestSendMessage in InstaSpace/internal/test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="InstaSpace" />
       <working_directory value="$PROJECT_DIR$/internal/test" />
       <root_directory value="$PROJECT_DIR$" />
@@ -142,7 +177,7 @@
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
-      <pattern value="^\QTestUploadPhotoHandler\E$" />
+      <pattern value="^\QTestSendMessage\E$" />
       <method v="2" />
     </configuration>
     <configuration name="go test test" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
@@ -164,11 +199,11 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Test.TestUploadPhotoHandler in InstaSpace/internal/test" />
+        <item itemvalue="Go Test.TestGetMessages in InstaSpace/internal/test" />
+        <item itemvalue="Go Test.TestSendMessage in InstaSpace/internal/test" />
         <item itemvalue="Go Test.go test test" />
-        <item itemvalue="Go Test.TestLoginUser in InstaSpace/internal/test" />
-        <item itemvalue="Go Test.TestLoginUser/Успешный_вход in InstaSpace/internal/test" />
-        <item itemvalue="Go Test.TestRegisterUser in InstaSpace/internal/test" />
+        <item itemvalue="Go Build.go build InstaSpace/internal/test" />
+        <item itemvalue="Go Test.TestSavePhoto in InstaSpace/internal/test" />
       </list>
     </recent_temporary>
   </component>

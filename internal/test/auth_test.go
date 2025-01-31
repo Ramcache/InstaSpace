@@ -21,14 +21,20 @@ func TestRegisterUser(t *testing.T) {
 	}{
 		{
 			Name:         "Успешная регистрация",
-			Payload:      `{"email": "test@example.com", "password": "securepassword"}`,
+			Payload:      `{"email": "test@example.com", "password": "securepassword", "username": "testuser"}`,
 			ExpectedCode: http.StatusCreated,
 			ShouldError:  false,
 		},
 		{
 			Name:         "Регистрация с существующим email",
-			Payload:      `{"email": "test@example.com", "password": "securepassword"}`,
+			Payload:      `{"email": "test@example.com", "password": "securepassword", "username": "testuser2"}`,
 			ExpectedCode: http.StatusInternalServerError,
+			ShouldError:  true,
+		},
+		{
+			Name:         "Регистрация без username",
+			Payload:      `{"email": "test2@example.com", "password": "securepassword"}`,
+			ExpectedCode: http.StatusBadRequest,
 			ShouldError:  true,
 		},
 	}
@@ -40,7 +46,7 @@ func TestRegisterUser(t *testing.T) {
 
 			if tc.Name == "Регистрация с существующим email" {
 				hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("securepassword"), bcrypt.DefaultCost)
-				_, err = db.Exec(ctx, "INSERT INTO users (email, password) VALUES ($1, $2)", "test@example.com", hashedPassword)
+				_, err = db.Exec(ctx, "INSERT INTO users (email, password, username) VALUES ($1, $2, $3)", "test@example.com", hashedPassword, "testuser")
 				require.NoError(t, err, "Не удалось добавить существующего пользователя")
 			}
 
@@ -61,7 +67,7 @@ func TestLoginUser(t *testing.T) {
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("securepassword"), bcrypt.DefaultCost)
 	require.NoError(t, err, "Не удалось хэшировать пароль")
-	_, err = db.Exec(ctx, "INSERT INTO users (email, password) VALUES ($1, $2)", "test@example.com", hashedPassword)
+	_, err = db.Exec(ctx, "INSERT INTO users (email, password, username) VALUES ($1, $2, $3)", "test@example.com", hashedPassword, "testuser")
 	require.NoError(t, err, "Не удалось добавить пользователя")
 
 	testCases := []struct {

@@ -50,6 +50,7 @@ func TestMain(m *testing.M) {
 	zapLogger.Info("Успешное подключение к базе данных для тестов")
 
 	r := mux.NewRouter()
+
 	userRepo := repositories.NewUserRepository(db)
 	authService := services.NewAuthService(userRepo, cfg.JWTSecret)
 	authHandler := handlers.NewAuthHandler(authService, zapLogger)
@@ -62,8 +63,16 @@ func TestMain(m *testing.M) {
 	commentService = services.NewCommentService(commentRepo)
 	commentHandler := handlers.NewCommentHandler(commentService, zapLogger)
 
-	testServer = httptest.NewServer(r)
-	defer testServer.Close()
+	likeRepo := repositories.NewLikeRepository(db)
+	likeService := services.NewLikeService(likeRepo)
+	likeHandler := handlers.NewLikeHandler(likeService, zapLogger)
+
+	messageRepo := repositories.NewMessageRepository(db)
+	messageService := services.NewMessageService(messageRepo)
+	messageHandler := handlers.NewMessageHandler(messageService, zapLogger)
+
+	r.HandleFunc("/api/messages", messageHandler.SendMessage).Methods("POST")
+	r.HandleFunc("/api/messages", messageHandler.GetMessages).Methods("GET")
 
 	r.HandleFunc("/register", authHandler.Register).Methods("POST")
 	r.HandleFunc("/login", authHandler.Login).Methods("POST")
@@ -74,6 +83,11 @@ func TestMain(m *testing.M) {
 	r.HandleFunc("/api/comments/{photoID}", commentHandler.GetCommentsByPhotoID).Methods("GET")
 	r.HandleFunc("/api/comments/{id}/edit", commentHandler.UpdateComment).Methods("PUT")
 	r.HandleFunc("/api/comments/{id}/delete", commentHandler.DeleteComment).Methods("DELETE")
+
+	r.HandleFunc("/api/likes", likeHandler.AddLikeHandler).Methods("POST")
+	r.HandleFunc("/api/likes", likeHandler.RemoveLikeHandler).Methods("DELETE")
+	r.HandleFunc("/api/likes", likeHandler.GetLikesHandler).Methods("GET")
+	r.HandleFunc("/api/likes/count", likeHandler.GetLikeCountHandler).Methods("GET")
 
 	testServer = httptest.NewServer(r)
 	defer testServer.Close()

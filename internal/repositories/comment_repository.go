@@ -36,20 +36,21 @@ func (r *CommentRepository) CreateComment(ctx context.Context, comment *models.C
 
 func (r *CommentRepository) GetCommentsByPhotoID(ctx context.Context, photoID int) ([]models.Comment, error) {
 	query := `
-        SELECT id, user_id, photo_id, content, created_at
-        FROM comments
-        WHERE photo_id = $1`
+    SELECT c.id, c.content, c.created_at, u.username 
+    FROM comments c 
+    JOIN users u ON c.user_id = u.id 
+    WHERE c.photo_id = $1
+`
 	rows, err := r.DB.Query(ctx, query, photoID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	comments := make([]models.Comment, 0)
+	var comments []models.Comment
 	for rows.Next() {
 		var comment models.Comment
-		err := rows.Scan(&comment.ID, &comment.UserID, &comment.PhotoID, &comment.Content, &comment.CreatedAt)
-		if err != nil {
+		if err := rows.Scan(&comment.ID, &comment.Content, &comment.CreatedAt, &comment.Username); err != nil {
 			return nil, err
 		}
 		comments = append(comments, comment)
